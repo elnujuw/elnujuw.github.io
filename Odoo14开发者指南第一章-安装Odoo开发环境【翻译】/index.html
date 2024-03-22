@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Odoo14开发者指南第一章-安装Odoo开发环境【翻译】 - Junle&#039;s Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Junle&#039;s Blog"><meta name="msapplication-TileImage" content="/static/logos.jpeg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Junle&#039;s Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="有几种方法可以建立Odoo开发环境。 本章提出其中一个。您肯定会在网络上找到许多其他教程，这些教程介绍了其他方法。请记住，本章是关于与生产环境有不同要求的开发环境。"><meta property="og:type" content="blog"><meta property="og:title" content="Odoo14开发者指南第一章-安装Odoo开发环境【翻译】"><meta property="og:url" content="https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%AE%89%E8%A3%85Odoo%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><meta property="og:site_name" content="Junle&#039;s Blog"><meta property="og:description" content="有几种方法可以建立Odoo开发环境。 本章提出其中一个。您肯定会在网络上找到许多其他教程，这些教程介绍了其他方法。请记住，本章是关于与生产环境有不同要求的开发环境。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.junle.org/images/Differences_between_the_Community_and_Enterprise_Editions.png"><meta property="og:image" content="https://www.junle.org/images/Login_screen_of_the_Odoo_instance.png"><meta property="og:image" content="https://www.junle.org/images/Database_manager.png"><meta property="og:image" content="https://www.junle.org/images/Master_password_warning.png"><meta property="og:image" content="https://www.junle.org/images/Setting_a_new_master_password_dialog.png"><meta property="og:image" content="https://www.junle.org/images/Creating_a_new_database_dialog.png"><meta property="og:image" content="https://www.junle.org/images/Duplicate_Database_dialog.png"><meta property="og:image" content="https://www.junle.org/images/Delete_Database_dialog.png"><meta property="og:image" content="https://www.junle.org/images/Backup_Database_dialog.png"><meta property="og:image" content="https://www.junle.org/images/Restore_Database_dialog.png"><meta property="og:image" content="https://www.junle.org/images/Links_to_activate_different_developer_modes.png"><meta property="og:image" content="https://www.junle.org/images/Browser_extension_for_debug_mode.png"><meta property="og:image" content="https://www.junle.org/images/Menu_item_to_update_the_apps_list.png"><meta property="og:image" content="https://www.junle.org/images/Dialog_to_update_the_apps_list.png"><meta property="article:published_time" content="2021-03-18T01:32:23.000Z"><meta property="article:modified_time" content="2024-03-22T06:43:55.673Z"><meta property="article:author" content="Junle"><meta property="article:tag" content="Odoo开发者指南"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://www.junle.org/images/Differences_between_the_Community_and_Enterprise_Editions.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%AE%89%E8%A3%85Odoo%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"},"headline":"Odoo14开发者指南第一章-安装Odoo开发环境【翻译】","image":["https://www.junle.org/images/Differences_between_the_Community_and_Enterprise_Editions.png","https://www.junle.org/images/Login_screen_of_the_Odoo_instance.png","https://www.junle.org/images/Database_manager.png","https://www.junle.org/images/Master_password_warning.png","https://www.junle.org/images/Setting_a_new_master_password_dialog.png","https://www.junle.org/images/Creating_a_new_database_dialog.png","https://www.junle.org/images/Duplicate_Database_dialog.png","https://www.junle.org/images/Delete_Database_dialog.png","https://www.junle.org/images/Backup_Database_dialog.png","https://www.junle.org/images/Restore_Database_dialog.png","https://www.junle.org/images/Links_to_activate_different_developer_modes.png","https://www.junle.org/images/Browser_extension_for_debug_mode.png","https://www.junle.org/images/Menu_item_to_update_the_apps_list.png","https://www.junle.org/images/Dialog_to_update_the_apps_list.png"],"datePublished":"2021-03-18T01:32:23.000Z","dateModified":"2024-03-22T06:43:55.673Z","author":{"@type":"Person","name":"Junle"},"publisher":{"@type":"Organization","name":"Junle's Blog","logo":{"@type":"ImageObject","url":"https://www.junle.org/static/logos.jpeg"}},"description":"有几种方法可以建立Odoo开发环境。 本章提出其中一个。您肯定会在网络上找到许多其他教程，这些教程介绍了其他方法。请记住，本章是关于与生产环境有不同要求的开发环境。"}</script><link rel="canonical" href="https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%AE%89%E8%A3%85Odoo%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><link rel="alternate" href="/atom.xml" title="Junle&#039;s Blog" type="application/atom+xml"><link rel="icon" href="/static/logos.jpeg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/monokai-sublime.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/static/logos.jpeg" alt="Junle&#039;s Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/tags">标签</a></div><div class="navbar-end"><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-03-18T01:32:23.000Z" title="2021/3/18 09:32:23">2021-03-18</time>发表</span><span class="level-item"><time dateTime="2024-03-22T06:43:55.673Z" title="2024/3/22 14:43:55">2024-03-22</time>更新</span><span class="level-item">1 小时读完 (大约11031个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">Odoo14开发者指南第一章-安装Odoo开发环境【翻译】</h1><div class="content"><p>有几种方法可以建立Odoo开发环境。 本章提出其中一个。您肯定会在网络上找到许多其他教程，这些教程介绍了其他方法。请记住，本章是关于与生产环境有不同要求的开发环境。</p>
+<p>如果您不熟悉Odoo开发，则必须了解Odoo生态系统的某些方面。第一个Recipe将为您简要介绍Odoo生态系统，然后我们将继续进行Odoo的安装以进行开发。</p>
+<span id="more"></span>
+<p>在本章中，我们将介绍以下Recipe：</p>
+<ul>
+<li>了解Odoo生态系统</li>
+<li>从源代码轻松安装Odoo</li>
+<li>管理Odoo服务器数据库</li>
+<li>将实例配置存储在文件中</li>
+<li>激活Odoo开发者工具和更新附加模块列表</li>
+</ul>
+<h2 id="了解Odoo生态系统"><a href="#了解Odoo生态系统" class="headerlink" title="了解Odoo生态系统"></a>了解Odoo生态系统</h2><p>Odoo为开发人员提供了现成的模块化。 它强大的框架可帮助开发人员快速构建项目。 在开始成为一名成功的Odoo开发人员之前，您应该熟悉Odoo生态系统中的各种角色。</p>
+<h2 id="Odoo版本"><a href="#Odoo版本" class="headerlink" title="Odoo版本"></a>Odoo版本</h2><p>Odoo带有两个不同的版本。第一个是开源的<strong>社区版</strong>，第二个是具有许可费的<strong>企业版</strong>。与其他软件供应商不同，Odoo企业版只是一堆额外的应用程序，它们为社区版添加了额外的功能或新的应用程序。基本上，企业版在社区版之上运行。社区版已获得<strong>Lesser General Public License v3.0 (LGPLv3)</strong> 许可证，并随附所有基本的企业资源计划（ERP）应用程序，例如销售，客户关系管理（CRM），发票，购买和网站构建器 。另外，企业版附带Odoo企业版许可证，这是专有许可证。Odoo企业版具有许多高级功能，例如完整记帐，工作室，互联网协议语音（VoIP），移动响应设计，电子签名，营销自动化，交付和银行集成，IoT等。企业版还为您提供了无限的错误修复支持。下图显示了企业版取决于社区版，这就是为什么您需要后者才能使用前者的原因：</p>
+<p><img src="/images/Differences_between_the_Community_and_Enterprise_Editions.png" alt="社区版和企业版之间的差异"></p>
+<p>您可以在这里看到两个版本的完整比较：<a target="_blank" rel="noopener" href="https://www.odoo.com/page/editions">https://www.odoo.com/page/editions</a>.</p>
+<blockquote>
+<p>Odoo拥有最多的社区开发人员，这就是为什么您会在应用商店中找到大量第三方应用（模块）的原因。一些免费应用程序使用**Affero General Public License version 3 (AGPLv3)**。如果您的应用程序对此类应用程序有依赖性，则不能在该应用程序上使用专有许可证。具有Odoo专有许可证的应用程序只能在具有LGPL或其他专有许可证的模块上开发。</p>
+</blockquote>
+<h2 id="Git存储库"><a href="#Git存储库" class="headerlink" title="Git存储库"></a>Git存储库</h2><p>Odoo的整个代码库都托管在GitHub上。您可以在此处发布稳定版本的错误&#x2F;问题。您还可以通过提交拉取请求（PR）提出新功能。Odoo中有几个存储库。有关更多信息，请参见下表：</p>
+<table>
+<thead>
+<tr>
+<th>Repositories</th>
+<th>仓库用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/odoo/odoo">https://github.com/odoo/odoo</a></td>
+<td>Odoo社区版，对公众开放。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/odoo/enterprise">https://github.com/odoo/enterprise</a></td>
+<td>Odoo企业版，仅对Odoo的合作伙伴开放。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/odoo-dev/odoo">https://github.com/odoo-dev/odoo</a></td>
+<td>开发中的仓库，对公众开放。（已废弃）</td>
+</tr>
+</tbody></table>
+<p>每年，Odoo都会发布一个主要（长期支持（LTS））版本和一些次要版本。 次版本主要用于Odoo的在线SaaS服务，这意味着Odoo SaaS用户可以尽早使用这些功能。在GitHub上，主要版本分支的名称为14.0、13.0和12.0，次要版本分支的名称为saas-14.1和saas-14.2。这些次要版本主要用于Odoo的SaaS平台。master分支正在开发中并且不稳定，因此建议不要将此分支用于生产中，因为它可能会破坏数据库。</p>
+<h2 id="Runbot"><a href="#Runbot" class="headerlink" title="Runbot"></a>Runbot</h2><p>Runbot是Odoo的自动化测试环境。每当Odoo的GitHub分支中有新的提交时，Runbot都会提取这些最新更改并为最后四个提交创建构建测试环境。在这里，您可以测试所有稳定和未开发的分支。您甚至可以使用企业版及其开发分支。每个内部版本都有不同的背景颜色，用于指示测试用例的状态：</p>
+<ul>
+<li>绿色的背景色表示所有测试用例都可以成功运行，并且您可以测试该分支；</li>
+<li>红色的背景色则表示该分支上的某些测试用例已失败，并且某些功能可能在该版本上被破坏。</li>
+</ul>
+<p>您可以查看所有测试用例的日志，准确显示安装过程中发生的情况。每个版本都有两个数据库。全部数据库已安装所有模块，而基础数据库仅已安装基本Odoo模块。每个版本都安装了基本的演示数据，因此您无需额外配置即可快速对其进行测试。</p>
+<blockquote>
+<p>你可以通过<a target="_blank" rel="noopener" href="http://runbot.odoo.com/runbot">http://runbot.odoo.com/runbot</a>链接访问Runbot，以下凭证可用于访问任何Runbot构建的测试环境：</p>
+<ul>
+<li><strong>Login ID</strong>: admin <strong>Password</strong>: admin </li>
+<li><strong>Login ID</strong>: demo <strong>Password</strong>: demo </li>
+<li><strong>Login ID</strong>: portal <strong>Password</strong>: portal</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>这是一个公共测试环境，因此有时其他用户可能正在使用&#x2F;测试您正在测试的同一分支。</p>
+</blockquote>
+<h2 id="Odoo-app-store"><a href="#Odoo-app-store" class="headerlink" title="Odoo app store"></a>Odoo app store</h2><p>几年前，Odoo推出了应用程序商店，这立刻引起了轰动。 目前，这里托管了22,000多种不同的应用程序。 在应用商店中，您会找到许多针对不同版本的免费和付费应用。 这包括针对不同业务领域的特定解决方案，例如教育，食品工业和医学。 它还包括可扩展或向现有Odoo应用程序添加新功能的应用程序。 该应用程序商店还为Odoo网站构建者提供了许多精美的主题。 在第三章，创建Odoo附加模块中，我们将研究如何为自定义模块设置价格和货币。</p>
+<p>您可以通过以下URL访问Odoo应用商店：</p>
+<p><a target="_blank" rel="noopener" href="https://www.odoo.com/apps">https://www.odoo.com/apps</a></p>
+<p>您可以通过以下URL访问Odoo主题：</p>
+<p><a target="_blank" rel="noopener" href="https://apps.odoo.com/apps/themes">https://apps.odoo.com/apps/themes</a></p>
+<blockquote>
+<p>Odoo已开源了13版和14版的几个主题。请注意，这些主题是以前版本中的付费主题。 这意味着，在Odoo 13和14版本中，您可以免费下载和使用这些精美的主题。</p>
+</blockquote>
+<h2 id="Odoo社区协会（OCA）"><a href="#Odoo社区协会（OCA）" class="headerlink" title="Odoo社区协会（OCA）"></a>Odoo社区协会（OCA）</h2><p><strong>Odoo Community Association (OCA)</strong> 是一个非营利性组织，开发&#x2F;管理基于社区的Odoo模块。所有OCA模块都是开源的，由Odoo社区成员维护。在OCA的GitHub帐户下，您可以找到用于不同Odoo应用程序的多个存储库。 除了Odoo模块之外，它还包含各种工具，迁移库，会计本地化等等。</p>
+<p>这是OCA的官方GitHub帐户的URL：<a target="_blank" rel="noopener" href="https://github.com/OCA">https://github.com/OCA</a>。</p>
+<h2 id="官方Odoo帮助论坛"><a href="#官方Odoo帮助论坛" class="headerlink" title="官方Odoo帮助论坛"></a>官方Odoo帮助论坛</h2><p>Odoo具有非常强大的框架，仅通过使用&#x2F;激活选项或遵循特定的模式就可以完成很多事情。因此，如果您遇到一些技术问题或不确定某些复杂情况，可以将查询发布到Odoo的官方帮助论坛上。许多开发人员都在这个论坛上很活跃，其中包括Odoo的一些正式员工。</p>
+<p>您可以在以下URL搜索问题或发布新问题：<a target="_blank" rel="noopener" href="https://help.odoo.com.help.odoo.com/">https://help.odoo.com.help.odoo.com</a>。</p>
+<h2 id="Odoo的eLearning-学习平台"><a href="#Odoo的eLearning-学习平台" class="headerlink" title="Odoo的eLearning 学习平台"></a>Odoo的eLearning 学习平台</h2><p>最近，Odoo启动了一个新的电子学习平台。 这个平台上有很多视频，解释了如何使用不同的Odoo应用程序。 在撰写本书时，该平台没有技术视频，而只是功能视频。</p>
+<p>这是Odoo电子学习平台的URL：<a target="_blank" rel="noopener" href="https://www.odoo.com/slides">https://www.odoo.com/slides</a>。</p>
+<h2 id="从源代码轻松安装Odoo"><a href="#从源代码轻松安装Odoo" class="headerlink" title="从源代码轻松安装Odoo"></a>从源代码轻松安装Odoo</h2><p>强烈建议使用Linux Ubuntu操作系统来安装Odoo，因为除了大多数Odoo开发人员还使用Odoo进行所有测试、调试和安装外，Odoo还是使用该操作系统。使用GNU &#x2F; Linux发行版，并且比<strong>Windows</strong>或<strong>macOS</strong>更容易获得Odoo社区对<strong>GNU &#x2F; Linux</strong>中发生的OS级问题的支持。</p>
+<p>还建议使用与生产环境相同的环境（相同的发行版和相同的版本）开发Odoo附加模块。这将避免令人讨厌的意外情况，例如在部署当天发现库具有比预期不同的版本，并且行为略有不同和不兼容的情况。如果您的工作站使用的是其他操作系统，则一种好的方法是在您的工作站上设置虚拟机（VM），然后在该VM中安装GNU &#x2F; Linux发行版。</p>
+<blockquote>
+<p>Ubuntu是Microsoft Store中的一个应用程序，因此，如果您不想切换到Ubuntu OS，也可以使用它。</p>
+</blockquote>
+<p>对于这本书，我们将使用Ubuntu Server 18.04 LTS，但您可以使用任何其他Debian GNU &#x2F; Linux OS。无论选择哪种Linux发行版，都应该对如何从命令行使用它有所了解，并且了解系统管理当然不会有任何危害。</p>
+<h3 id="做好准备"><a href="#做好准备" class="headerlink" title="做好准备"></a>做好准备</h3><p>我们假设您已启动并运行Ubuntu 18.04，并且您具有具有root用户访问权限的帐户或已配置sudo。 在以下各节中，我们将安装Odoo的依赖项并从GitHub下载Odoo的源代码。</p>
+<blockquote>
+<p>有些配置需要系统登录用户名，因此只要命令行中需要登录用户名，我们都会使用<code>$(whoami)</code>。 这是一个shell命令，它将代替您在键入的命令中的登录名。</p>
+</blockquote>
+<p>如果您拥有GitHub帐户，某些操作肯定会更容易。如果您还没有，请访问<a target="_blank" rel="noopener" href="https://github.com/">https://github.com</a>并创建一个。</p>
+<h3 id="怎么做…"><a href="#怎么做…" class="headerlink" title="怎么做…"></a>怎么做…</h3><p>要从源代码安装Odoo，请执行以下步骤：</p>
+<ol>
+<li><p>运行以下命令以安装主要依赖项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt install git python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools libpng-dev libjpeg-dev gdebi -y</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>下载和安装wkhtmltopdf:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb</span><br><span class="line">$ sudo dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果在上一个命令中发现错误，请使用以下命令强制安装依赖项：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install -f</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>现在，安装PostgreSQL数据库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install postgresql -y</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>配置PostgreSQL数据库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo -u postgres createuser --superuser $(<span class="built_in">whoami</span>)</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>配置git：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global user.name <span class="string">&quot;Your Name&quot;</span></span><br><span class="line">$ git config --global user.email youremail@example.com</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>克隆Odoo代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">mkdir</span> ~/odoo-dev</span><br><span class="line">$ <span class="built_in">cd</span> ~/odoo-dev</span><br><span class="line">$ git <span class="built_in">clone</span> -b 14.0 --single-branch --depth 1 https://github.com/odoo/odoo.git</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>创建odoo-14虚拟环境并激活：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python3 -m venv ~/venv-odoo-14.0</span><br><span class="line">$ <span class="built_in">source</span> ~/venv-odoo-14.0/bin/activate</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在虚拟环境中安装Odoo的Python依赖：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/odoo-dev/odoo/</span><br><span class="line">$ pip3 install -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>创建和开启你的Odoo实例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ createdb odoo-test</span><br><span class="line">$ python3 odoo-bin -d odoo-test –i base --addons-path=addons --dbfilter=odoo-test$</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在浏览器中访问<a target="_blank" rel="noopener" href="http://localhost:8069/">http://localhost:8069</a>并通过使用admin帐户并使用admin作为密码对它进行身份验证。</p>
+</li>
+</ol>
+<blockquote>
+<p>如果需要RTL支持，请通过以下命令安装node和rtlcss：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install nodejs npm -y </span><br><span class="line">$ sudo npm install -g rtlcss</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="怎么运行的…"><a href="#怎么运行的…" class="headerlink" title="怎么运行的…"></a>怎么运行的…</h3><p>在第1步中，我们安装了几个核心依赖项。 这些依赖项包括各种工具，例如<strong>git</strong>，<strong>pip3</strong>，<strong>wget</strong>，<strong>Python</strong>设置工具等。 这些核心工具将帮助我们使用简单的命令安装其他Odoo依赖项。</p>
+<p>在第2步中，我们下载并安装了<strong>wkhtmltopdf</strong>软件包，该软件包在Odoo中用于打印PDF文档，例如销售订单，发票和其他报告。Odoo 14.0需要<strong>wkhtmltopdf</strong>的0.12.5版本，并且可能不包括该版本 在当前的Linux发行版中。对于我们来说幸运的是，<strong>wkhtmltopdf</strong>的维护者在<a target="_blank" rel="noopener" href="http://wkhtmltopdf.org/downloads.html">http://wkhtmltopdf.org/downloads.html</a>上为各种发行版提供预构建的软件包，我们已经从该URL下载并安装了该软件包。</p>
+<h4 id="PostgreSQL的配置"><a href="#PostgreSQL的配置" class="headerlink" title="PostgreSQL的配置"></a>PostgreSQL的配置</h4><p>在第3步中，我们安装了PostgreSQL数据库。</p>
+<p>在第4步中，我们使用系统的登录名创建了一个新的数据库用户。<code>$(whoami)</code>用于获取您的登录名，<code>-s</code>选项用于提供超级用户权限。 让我们看看为什么我们需要这些配置。</p>
+<p>Odoo使用<strong>psycopg2</strong> Python库连接PostgreSQL数据库。要使用<strong>psycopg2</strong>库访问PostgreSQL数据库，Odoo默认使用以下值：</p>
+<ul>
+<li>默认情况下，psycopg2尝试使用与本地连接上的当前用户相同的用户名连接到数据库，这将启用无密码身份验证（这对开发环境很有用）。</li>
+<li>本地连接使用Unix域套接字。</li>
+<li>数据库服务器在端口<strong>5432</strong>上侦听。</li>
+</ul>
+<p> 现在您的PostgreSQL数据库已准备就绪，可以与Odoo连接。</p>
+<p>由于这是开发服务器，因此我们已向用户授予<code>--superuser</code>权限。可以给PostgreSQL用户更多的权限，因为这将是您的开发实例。对于生产实例，可以使用<code>--createdb</code>命令行而不是<code>--superuser</code>来限制权限。生产服务器中使用<code>--superuser</code>权限将被攻击者利用在已部署的代码的某些部分中的漏洞提供额外的杠杆作用。</p>
+<p>如果要使用具有不同登录名的数据库用户，则需要提供该用户的密码。这是通过在创建用户时在命令行上传递<code>--pwprompt</code>标志来完成的，在这种情况下，该命令将提示您输入密码。</p>
+<p>如果已经创建了用户，并且想要设置密码（或修改忘记的密码），则可以使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ psql -c <span class="string">&quot;alter role <span class="subst">$(whoami)</span> with password &#x27;newpassword&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果此命令失败，并显示一条错误消息，指出该数据库不存在，那是因为您没有在本Recipe的第4步中创建以登录名命名的数据库。没关系，只需添加<code>--dbname</code>选项和现有数据库名称即可，例如<code>--dbname template1</code>。</p>
+<h4 id="Git的配置"><a href="#Git的配置" class="headerlink" title="Git的配置"></a>Git的配置</h4><p>对于开发环境，我们使用源自GitHub的Odoo。 使用<strong>git</strong>，您可以轻松地在不同的Odoo版本之间切换。 另外，您可以使用<strong>git pull</strong>命令获取最新更改。</p>
+<p>在第5步中，我们配置了您的git用户。</p>
+<p>在第6步中，我们从Odoo的官方GitHub存储库下载了源代码。 我们已经使用<strong>git clone</strong>命令下载Odoo的源代码。 我们只使用了一个分支，因为我们只想要14.0版本的分支。 另外，我们使用<code>--depth 1</code>来避免下载分支的完整提交历史记录。 这些选项将非常快速地下载源代码，但是如果需要，您可以省略这些选项。</p>
+<p>Odoo开发人员还建议每晚进行构建，这些构建可以作为tarball和发行包使用。使用<strong>git clone</strong>的主要优点是，当在源树中提交新的错误修复程序时，您将能够更新您的存储库。您还可以轻松测试任何建议的修复程序并跟踪回归，从而可以使错误报告更加准确并对开发人员有所帮助。</p>
+<blockquote>
+<p>如果您有权访问企业版源代码，也可以在<code>~/odoo-dev</code>目录下的单独文件夹中下载该源代码。</p>
+</blockquote>
+<h4 id="虚拟环境"><a href="#虚拟环境" class="headerlink" title="虚拟环境"></a>虚拟环境</h4><p>Python虚拟环境（简称<strong>venv</strong>）是隔离的Python工作区。 这些对Python开发人员非常有用，因为它们允许安装具有不同版本的各种Python库的不同工作区，并且可能安装在不同的Python解释器版本上。</p>
+<p>您可以使用<code>python3 -m venv ~/newvenv</code>命令创建任意数量的环境。这将在指定位置创建一个<strong>newvenv</strong>目录，其中包含<strong>bin&#x2F;<strong>子目录和</strong>lib&#x2F;python3.6</strong>子目录。</p>
+<p>在第7步中，我们在<strong>~&#x2F;venv-odoo-14.0</strong>目录中创建了一个新的虚拟环境。这将是我们隔离的Odoo Python环境，所有Odoo的Python依赖项都将安装在此环境中。</p>
+<p>要激活虚拟环境，我们需要使用<strong>source</strong>命令。使用<code>source ~/venv-odoo-14.0/bin/activate</code>命令，我们已经激活了虚拟环境。</p>
+<h4 id="安装Python包"><a href="#安装Python包" class="headerlink" title="安装Python包"></a>安装Python包</h4><p>Odoo源代码的<strong>requirements.txt</strong>文件中列出了Python依赖项。在第8步中，我们通过<strong>pip3 install</strong>命令安装了所有这些要求。</p>
+<p>至此，您可以运行Odoo实例。</p>
+<h4 id="开启实例"><a href="#开启实例" class="headerlink" title="开启实例"></a>开启实例</h4><p>现在到了您一直在等待的时刻。要启动我们的第一个实例，在步骤9中，我们首先创建一个新的空数据库，使用odoo-bin脚本，然后使用以下命令启动Odoo实例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 odoo-bin -d odoo-test -i base --addons-path=addons --db-filter=odootest$</span><br></pre></td></tr></table></figure>
+
+
+
+<p>您也可以在odoo-bin之前使用.&#x2F;来省略python3，因为它是可执行的Python脚本，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./odoo-bin -d odoo-test –i base --addons-path=addons --db-filter=odoo-test$</span><br></pre></td></tr></table></figure>
+
+
+
+<p>对于odoo-bin，将使用具有以下命令行参数的脚本：</p>
+<ul>
+<li><code>-d database_name</code>：默认情况下使用此数据库。</li>
+<li><code>--db-filter=database_name$</code>：仅尝试连接到与提供的正则表达式匹配的数据库。一个Odoo安装可以为位于单独数据库中的多个实例提供服务，并且此参数限制了可用数据库。尾随的$很重要，因为正则表达式用于匹配模式。 这样可以避免选择以指定字符串开头的名称。</li>
+<li><code>--addons-path=directory1,directory2,...</code>：这是逗号分隔的目录列表，Odoo将在这些目录中查找附加组件。在实例创建时将扫描此列表，以填充实例中可用的附加模块的列表。如果要使用Odoo的企业版，请使用此选项添加其目录。</li>
+<li><code>-i base</code>: 这用于安装基本模块。通过命令行创建数据库时，这是必需的。</li>
+</ul>
+<p>如果您使用的数据库用户的登录名与Linux登录名不同，则需要传递以下附加参数：</p>
+<ul>
+<li><code>--db_host=localhost</code>: 使用与数据库服务器的TCP连接。</li>
+<li><code>--db_user=database_username</code>: 使用指定的数据库登录名。</li>
+<li><code>--db_password=database_password</code>: 这是用于对PostgreSQL服务器进行身份验证的密码。</li>
+</ul>
+<p>要获得所有可用选项的概述，请使用<code>--help</code>参数。 我们将在本章后面看到更多的<strong>odoo-bin</strong>脚本。</p>
+<p>在空数据库上启动Odoo时，它将首先创建支持其操作所需的数据库结构。它还将扫描加载项路径以找到可用的加载项模块，并将其插入数据库的初始记录中。这包括具有默认管理员密码的admin用户，您将使用该密码进行身份验证。</p>
+<p>在浏览器中访问<a target="_blank" rel="noopener" href="http://localhost:8069/">http://localhost:8069</a>会将您带到新创建的实例的登录页面，如以下屏幕截图所示：</p>
+<p><img src="/images/Login_screen_of_the_Odoo_instance.png" alt="Login screen of the Odoo instance"></p>
+<p>这是由于Odoo包含了HTTP服务器。默认情况下，它在TCP端口8069上侦听所有本地网络接口。</p>
+<h2 id="管理Odoo服务器数据库"><a href="#管理Odoo服务器数据库" class="headerlink" title="管理Odoo服务器数据库"></a>管理Odoo服务器数据库</h2><p>使用Odoo时，实例中的所有数据都存储在PostgreSQL数据库中。您可以使用所有常用的标准数据库管理工具，但是Odoo还建议使用Web界面进行一些常见操作。</p>
+<p>我们假设您的工作环境已建立并且您正在运行一个实例。</p>
+<h3 id="怎么做…-1"><a href="#怎么做…-1" class="headerlink" title="怎么做…"></a>怎么做…</h3><p>Odoo数据库管理界面提供了用于创建，复制，删除，备份和还原数据库的工具。 还有一种更改主密码的方法，该密码用于保护对数据库管理界面的访问。</p>
+<h4 id="访问数据库管理界面"><a href="#访问数据库管理界面" class="headerlink" title="访问数据库管理界面"></a>访问数据库管理界面</h4><p>要访问数据库，请执行以下步骤：</p>
+<ol>
+<li><p>转到实例的登录屏幕（如果已通过身份验证，请注销）。</p>
+</li>
+<li><p>单击<strong>Manage Databases</strong>链接。 这将导航到<a target="_blank" rel="noopener" href="http://localhost:8069/web/database/manager">http://localhost:8069/web/database/manager</a>（您也可以将浏览器直接指向该URL）：</p>
+<p><img src="/images/Database_manager.png" alt="Database manager"></p>
+</li>
+</ol>
+<h4 id="设置或更改主密码"><a href="#设置或更改主密码" class="headerlink" title="设置或更改主密码"></a>设置或更改主密码</h4><p>如果您已经为实例设置了默认值并且尚未修改它，正如我们将在下一节中说明的那样，数据库管理屏幕将显示一条警告，告诉您尚未设置<strong>master password</strong>，并且将 建议您设置一个直接链接：</p>
+<p><img src="/images/Master_password_warning.png" alt="Master password warning"></p>
+<p>要设置master password，请执行以下步骤：</p>
+<ol>
+<li><p>单击<strong>Set Master Password</strong>按钮。 您将看到一个对话框，要求您填写<strong>New Master Password</strong>字段：</p>
+<p><img src="/images/Setting_a_new_master_password_dialog.png" alt="Setting a new master password dialog"></p>
+</li>
+<li><p>输入新密码然后单击继续。</p>
+</li>
+</ol>
+<p>如果已经设置了主密码，请单击屏幕底部的<strong>Set Master Password</strong>按钮进行更改。在显示的对话框中，键入以前的主密码和新的主密码，然后单击<strong>Continue</strong>。</p>
+<blockquote>
+<p>主密码是服务器配置文件的<code>admin_password</code>的值。如果在未指定配置文件的情况下启动服务器，则会在<code>~/.odoorc</code>中生成一个新的密码。有关该配置文件的更多信息，请参考下一个Recipe。</p>
+</blockquote>
+<h4 id="新建一个新的数据库"><a href="#新建一个新的数据库" class="headerlink" title="新建一个新的数据库"></a>新建一个新的数据库</h4><p>此对话框可用于创建将由当前Odoo服务器处理的新数据库实例：</p>
+<ol>
+<li><p>在数据库管理窗口中，单击<strong>Create Database</strong>按钮，该按钮可在屏幕底部找到。这将弹出以下对话框：</p>
+<p><img src="/images/Creating_a_new_database_dialog.png" alt="Creating a new database dialog"></p>
+</li>
+<li><p>填写表格，如下所示：</p>
+<ul>
+<li><p><strong>Master Password</strong>：这是此实例的Master Password。</p>
+</li>
+<li><p><strong>Database Name</strong>：输入要创建的数据库的名称。</p>
+</li>
+<li><p><strong>Email</strong>：在此处添加您的电子邮件地址； 以后将用作您的用户名。</p>
+</li>
+<li><p><strong>Password</strong>：输入您要为新实例的管理员用户设置的密码。</p>
+</li>
+<li><p><strong>Phone Number</strong>：设置电话号码（可选）。</p>
+</li>
+<li><p><strong>Language</strong>：选择默认情况下要安装的语言下拉列表中的新数据库。Odoo将自动加载所选语言的翻译。</p>
+</li>
+<li><p><strong>Country</strong>：在下拉菜单中选择主要公司的国家列表。 选择此项将自动配置一些东西，包括公司币种。</p>
+</li>
+<li><p><strong>Demo data</strong>：选中此框可获得演示数据。 这对于运行交互式测试或为客户设置演示很有用，但不应检查旨在包含生产数据的数据库。</p>
+<blockquote>
+<p>如果您希望使用数据库来运行模块的自动化测试（请参阅第7章，调试模块），则需要具有演示数据，因为Odoo中的绝大多数自动化测试都依赖于这些记录，以便运行成功。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>单击<strong>Continue</strong>按钮，等待一段时间，直到新数据库被初始化。然后，您将被重定向到实例并以管理员身份连接。</p>
+<blockquote>
+<p>故障排除</p>
+<p>如果将您重定向到登录屏幕，这可能是因为<code>--db-filter</code>选项已传递给Odoo且新的数据库名称与新的数据库名称不匹配。请注意，<code>odoo-bin start</code>命令以静默方式执行此操作，仅使当前数据库可用。要解决此问题，只需在不使用start命令的情况下重新启动Odoo，如本章从源代码轻松安装Odoo所示。如果有配置文件（请参阅本章后面的在文件配方中存储实例配置），然后检查<code>db_filter</code>选项是否未设置或设置为与新数据库名称匹配的值。</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="复制数据库"><a href="#复制数据库" class="headerlink" title="复制数据库"></a>复制数据库</h4><p>通常您将拥有一个现有的数据库，并且您想尝试使用该数据库尝试一个过程或运行一个测试，而无需修改现有的数据。这里的解决方案很简单：复制数据库并在副本上运行测试。根据需要重复多次：</p>
+<ol>
+<li><p>在数据库管理屏幕中，单击要克隆的数据库名称旁边的<strong>Duplicate Database</strong>链接：</p>
+<p><img src="/images/Duplicate_Database_dialog.png" alt="Duplicate Database dialog"></p>
+</li>
+<li><p>填写以下表格：</p>
+<ul>
+<li><strong>Master Password</strong>: 这是Odoo服务器的主密码。</li>
+<li><strong>New Name</strong>: 您要赋予副本的名称。</li>
+</ul>
+</li>
+<li><p>点击<strong>Continue</strong>按钮。</p>
+</li>
+<li><p>然后您可以在数据库管理屏幕中单击新创建的数据库的名称，以访问该数据库的登录屏幕。</p>
+</li>
+</ol>
+<h4 id="删除数据库"><a href="#删除数据库" class="headerlink" title="删除数据库"></a>删除数据库</h4><p>完成测试后，您将需要清理重复的数据库。为此，请执行以下步骤：</p>
+<ol>
+<li><p>在数据库管理屏幕中，您将在数据库名称旁边找到<strong>Delete</strong>按钮。点击它会弹出如下对话框：</p>
+<p><img src="/images/Delete_Database_dialog.png" alt="Delete Database dialog"></p>
+</li>
+<li><p>填写表格并填写<strong>Master Password</strong>字段，这是Odoo服务器的主密码。</p>
+</li>
+<li><p>单击<strong>Delete</strong>按钮。</p>
+<blockquote>
+<p>警告！ 潜在的数据丢失！<br>如果您选择了错误的数据库并且没有备份，则无法恢复丢失的数据。</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="备份数据库"><a href="#备份数据库" class="headerlink" title="备份数据库"></a>备份数据库</h4><p>要创建备份，请执行以下步骤：</p>
+<ol>
+<li><p>在数据库管理屏幕中，您将在数据库名称旁边找到“备份”按钮。单击它会弹出对话框，如以下屏幕截图所示：</p>
+<p><img src="/images/Backup_Database_dialog.png" alt="Backup Database dialog"></p>
+</li>
+<li><p>填写表格，如下所示：</p>
+<ul>
+<li><strong>Master Password</strong>：这是Odoo服务器的主密码。</li>
+<li><strong>Backup Format</strong>：始终对生产数据库使用<strong>zip</strong>，因为这是唯一真正的完整备份格式。仅当您不太在乎文件存储时，才使用<strong>pg_dump</strong>的格式，<strong>pg_dump</strong>格式仅用在开发数据库。</li>
+</ul>
+</li>
+<li><p>点击<strong>Backup</strong>按钮，备份文件随后将下载到您的浏览器中。</p>
+</li>
+</ol>
+<h4 id="恢复数据库备份"><a href="#恢复数据库备份" class="headerlink" title="恢复数据库备份"></a>恢复数据库备份</h4><p>如果需要还原备份，则需要执行以下操作：</p>
+<ol>
+<li><p>在数据库管理屏幕中，您将在屏幕底部找到一个<strong>Restore Database</strong>按钮。单击它会弹出一个对话框，如以下屏幕截图所示：</p>
+<p><img src="/images/Restore_Database_dialog.png" alt="Restore Database dialog"></p>
+</li>
+<li><p>填写表格，如下所示：</p>
+<ul>
+<li><strong>Master Password</strong>：这是Odoo服务器的主密码。</li>
+<li><strong>File</strong>：这是之前下载的Odoo备份。</li>
+<li><strong>Database Name</strong>：提供将在其中还原备份的数据库的名称。 该数据库不得存在于服务器上。</li>
+<li><strong>This database might have been moved or copied</strong>： 如果原始数据库位于另一台服务器上，或者已从当前服务器中删除，请选择“此数据库已移动”。否则，选择“此数据库是副本”，这是安全的默认选项。</li>
+</ul>
+</li>
+<li><p>点击<strong>Continue</strong>按钮</p>
+<blockquote>
+<p>如果尝试执行此操作，收到一条错误消息（数据库还原错误：数据库已存在）。您需要先删除该数据库。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="怎么运行的…-1"><a href="#怎么运行的…-1" class="headerlink" title="怎么运行的…"></a>怎么运行的…</h3><p>以上功能除了<strong>设置和更改主密码</strong>外，另外的功能还可以在服务器上运行PostgreSQL管理命令来实现。</p>
+<p>主密码是非常重要的一条信息，它仅存在于Odoo服务器配置文件中，并且永远不会存储在数据库中。过去曾经是默认值<strong>admin</strong>，但是使用此值是有风险的， 在Odoo v9及更高版本中，此密码被标识为未设置的主密码，并且在访问数据库管理界面时敦促您对其进行更改。即使将其存储在<strong>admin_passwd</strong>条目下的配置文件中，这与管理员用户的密码不同；这是两个独立的密码。主密码是为Odoo服务器进程设置的，该进程本身可以处理多个数据库实例，每个实例都有一个具有自己密码的独立管理员用户。</p>
+<blockquote>
+<p>安全注意事项</p>
+<p>请记住，在本章中我们正在考虑开发环境。在生产服务器上工作时，必须保护Odoo数据库管理界面，因为它可以访问很多敏感信息，尤其是在服务器托管Odoo的情况下。 几个不同客户端的实例。</p>
+</blockquote>
+<p>要创建新数据库，Odoo使用PostgreSQL <strong>createdb</strong>实用程序并调用内部Odoo函数来初始化新数据库，其方式与在空数据库上启动Odoo时相同。</p>
+<p>为了复制数据库，Odoo使用<strong>createdb</strong>的<strong>--template</strong>选项，将原始数据库作为参数传递，这实质上是使用内部和优化的PostgreSQL例程在新数据库中复制模板数据库的结构，这比创建一个 备份和还原（特别是在使用Web界面时，这需要下载备份文件并再次上传）。</p>
+<p>备份和还原操作分别使用<strong>pg_dump</strong>和<strong>pg_restore</strong>实用程序。当使用<strong>zip</strong>格式时，备份还包括文件存储的副本，当您将Odoo配置为不将这些文件保留在数据库中时，备份还将包括文件存储的副本，其中包含文件的副本，这在14.0中是默认的选项。除非您进行更改，否则这些文件位于<strong>~&#x2F;.local&#x2F;share&#x2F;Odoo&#x2F;filestore</strong>中。</p>
+<p>如果备份变大，则下载可能会失败。这是因为Odoo服务器本身无法处理内存中的大文件，或者是因为该服务器在反向代理之后运行，因为HTTP响应的大小受到限制。相反，出于相同的原因，您可能会遇到数据库还原操作方面的问题。当您开始遇到这些问题时，是时候投资购买更强大的外部备份解决方案了。</p>
+<h3 id="还有更多…"><a href="#还有更多…" class="headerlink" title="还有更多…"></a>还有更多…</h3><p>经验丰富的Odoo开发人员通常不使用数据库管理界面管理数据库，而是从命令行执行操作。例如，要使用演示数据初始化新数据库，可以使用以下单行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ createdb testdb &amp;&amp; odoo-bin -d testdb</span><br></pre></td></tr></table></figure>
+
+<p>此命令行的额外用法是，您可以在使用时请求安装附加组件，例如，<code>-i sale,purchase,stock</code>。</p>
+<p>要复制数据库，请停止服务器并运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ createdb -T dbname newdbname</span><br><span class="line">$ <span class="built_in">cd</span> ~/.local/share/Odoo/filestore <span class="comment"># 修改为你的备份文件目录</span></span><br><span class="line">$ <span class="built_in">cp</span> -r dbname newdbname</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>仅当数据库上没有活动会话时才使用createdb -T，这意味着您必须在从命令行复制数据库之前关闭Odoo服务器。</p>
+</blockquote>
+<p>要删除实例，请运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ dropdb dbname</span><br><span class="line">$ <span class="built_in">rm</span> -rf ~/.local/share/Odoo/filestore/dbname</span><br></pre></td></tr></table></figure>
+
+<p>要创建备份（假设PostgreSQL服务器在本地运行），请使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pg_dump -Fc -f dbname.dump dbname</span><br><span class="line">$ tar cjf dbname.tgz dbname.dump ~/.local/share/Odoo/filestore/dbname</span><br></pre></td></tr></table></figure>
+
+<p>要还原备份，请运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ tar xf dbname.tgz</span><br><span class="line">$ pg_restore -C -d dbname dbname.dump</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>警告！</p>
+<p>如果您的Odoo实例使用其他用户连接到数据库，则需要传递-U用户名，以便正确的用户是还原的数据库的所有者。</p>
+</blockquote>
+<h2 id="将实例配置存储在文件中"><a href="#将实例配置存储在文件中" class="headerlink" title="将实例配置存储在文件中"></a>将实例配置存储在文件中</h2><p>odoo-bin脚本有很多选项，记住所有这些以及在启动服务器时记住正确设置它们是很乏味的，幸运的是，可以将它们全部存储在配置文件中并仅通过 递给您想要更改的内容，例如用于开发。</p>
+<h3 id="怎么做…-2"><a href="#怎么做…-2" class="headerlink" title="怎么做…"></a>怎么做…</h3><p>对于此Recipe，请执行以下步骤：</p>
+<ol>
+<li><p>要为您的Odoo实例生成配置文件，请运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./odoo-bin --save --config myodoo.cfg --stop-after-init</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>您可以添加其他选项，它们的值将保存在生成的文件中。所有未设置的选项将以其默认值设置保存。要获取可能选项的列表，请使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./odoo-bin --<span class="built_in">help</span> | less</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这将为您提供有关各种选项执行效果的帮助。</p>
+</li>
+<li><p>要将命令行形式转换为配置形式，请使用选项名称，删除前导破折号，然后将中间的破折号转换为下划线。例如<code>--without-demo</code>更改为<strong>without_demo</strong>。这适用于大多数选项 ，但有一些例外情况，将在下一节中列出。</p>
+</li>
+<li><p>编辑<strong>myodoo.cfg</strong>文件（使用下一节中的表获取您可能要更改的一些参数），然后使用保存的选项启动服务器，运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./odoo-bin -c myodoo.cfg</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p><code>--config</code>选项通常缩写为<code>-c</code>。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="怎么运行的…-2"><a href="#怎么运行的…-2" class="headerlink" title="怎么运行的…"></a>怎么运行的…</h3><p>在启动时，Odoo会分三遍加载其配置；首先从源代码初始化所有选项的一组默认值，然后解析配置，如果文件中定义了相同的值都将覆盖默认值。</p>
+<p>如前所述，选项的名称可以通过删除前导破折号并将中间的破折号转换为下划线来使用，但有一些例外情况，尤其是以下内容：</p>
+<table>
+<thead>
+<tr>
+<th>Comand line</th>
+<th>Configuration file</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>--db-filter</td>
+<td>dbfilter</td>
+</tr>
+<tr>
+<td>--no-http</td>
+<td>http_enable&#x3D;True&#x2F;False</td>
+</tr>
+<tr>
+<td>–database</td>
+<td>db_name</td>
+</tr>
+<tr>
+<td>--dev</td>
+<td>dev_mode</td>
+</tr>
+<tr>
+<td>--i18n-import &#x2F; --i18n-export</td>
+<td>Unavailable</td>
+</tr>
+</tbody></table>
+<p>这是通过配置文件通常设置的选项列表：</p>
+<table>
+<thead>
+<tr>
+<th>Options</th>
+<th>Format</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>without_demo</td>
+<td>Comma-separated list of module names</td>
+<td>This prevents module data from being loaded. Give the value <code>all</code> to disable demo data fro all modules, or <code>False</code> to enable demo data for all modules. To disable demo data for specific modules, provide module names, for example, <code>sale,purchase,crm</code>.</td>
+</tr>
+<tr>
+<td>addons_path</td>
+<td>Comma-separated list of paths</td>
+<td>This is a list of directory name in which the server will look for add-ons.</td>
+</tr>
+<tr>
+<td>admin_passwd</td>
+<td>Text</td>
+<td>This is the master password(take a look at the preceding recipe).</td>
+</tr>
+<tr>
+<td>data_dir</td>
+<td>Path to a directory</td>
+<td>This is a directory in which the server will store session information, add-ons downloaded from the internet, and documents if you enable the file store.</td>
+</tr>
+<tr>
+<td>http_portlongpolling_port</td>
+<td>Port number</td>
+<td>These are the ports on which the Odoo server will listen. You will need to specify booth to run multiple Odoo servers on the same host; <code>longpolling_port</code> is only used if <code>workers</code> is not 0. <code>http_port</code> defaults to <code>8069</code>, and <code>longpolling_port</code> defaults to 8072.</td>
+</tr>
+<tr>
+<td>logfile</td>
+<td>Path to a file</td>
+<td>The file in which Odoo will write its logs.</td>
+</tr>
+<tr>
+<td>log_level</td>
+<td>Log verbosity level</td>
+<td>Specifies the level of logging. Accepted values(in increasing order of verbosity) include <code>critecal,error,warn,debug_rpc_answer,debug_sql</code>.</td>
+</tr>
+<tr>
+<td>workers</td>
+<td>Integer</td>
+<td>The number of worker processes. Refer to Chapter 3, Server Deployment, for more information.</td>
+</tr>
+<tr>
+<td>proxy_mode</td>
+<td>True&#x2F;False</td>
+<td>Activate reverse proxy WSGI wrappers. Only enable this when running behind a trusted web proxy!</td>
+</tr>
+</tbody></table>
+<p>以下是与数据库相关的配置选项的列表：</p>
+<table>
+<thead>
+<tr>
+<th>Options</th>
+<th>Format</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>db_host</td>
+<td>Hostname</td>
+<td>This is the name of the server running the PostgreSQL server. Use <code>False</code> to use local Unix domain sockets, and <code>localhost</code> to user TCP sockets locally.</td>
+</tr>
+<tr>
+<td>db_user</td>
+<td>Database user login</td>
+<td>This is generally empty if <code>db_host</code> is <code>False</code>. This will be the name of the user used to connect to the database.</td>
+</tr>
+<tr>
+<td>db_password</td>
+<td>Database user password</td>
+<td>This is generally empty if <code>db_host</code> is <code>False</code> and when<code>db_user</code> has the same name as the user running the server. Read the main page of <code>pg_hba.conf</code> for more information on this.</td>
+</tr>
+<tr>
+<td>db_name</td>
+<td>Database name</td>
+<td>This is used to set the database name on which some commands operate by default. This does not limit the databases on which the server will act. Refer to the following <code>dbfilter</code> option for this.</td>
+</tr>
+<tr>
+<td>db_sslmode</td>
+<td>Database SSL mode</td>
+<td>This is used to specify the database SSL connection mode.</td>
+</tr>
+<tr>
+<td>dbfilter</td>
+<td>A regular expression</td>
+<td>The Expression should match the mane of the databases that are considered by the server. If you run the website, it should match a single database, so it will look like <code>^databasename$</code>. More information on this can be found in <em>Chapter 3, Server Deployment</em>.</td>
+</tr>
+<tr>
+<td>list_db</td>
+<td>True&#x2F;False</td>
+<td>Set to <strong>True</strong> to disable the listing of databases. See <em>Chapter 3, Server Deployment</em>, for more information.</td>
+</tr>
+</tbody></table>
+<p>Odoo现在使用Python <strong>ConfigParser</strong>模块来解析配置文件。但是，Odoo 11.0中的实现已更改，并且不再可以使用变量插值，因此，如果习惯于使用<code>%(section.variable)s</code>表示法从其他变量的值中定义变量的值，则将需要改变您的习惯并恢复为明确的价值观。</p>
+<p>某些选项未在配置文件中使用，但在开发过程中被广泛使用：</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Format</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-i or --init</td>
+<td>Comma-separated list of module name</td>
+<td>It will install given modules by default while initializing the database.</td>
+</tr>
+<tr>
+<td>-u or --update</td>
+<td>Comma-separated list of module names</td>
+<td>It will update given modules when you restart the server. It is mostly used when you modify source code or update the branch from git.</td>
+</tr>
+<tr>
+<td>--dev</td>
+<td>all, reload, qweb, werkzeug and xml</td>
+<td>This enables developer mode and the auto-reload feature.</td>
+</tr>
+</tbody></table>
+<h2 id="激活Odoo开发者模式工具"><a href="#激活Odoo开发者模式工具" class="headerlink" title="激活Odoo开发者模式工具"></a>激活Odoo开发者模式工具</h2><p>当使用Odoo开发时，您需要知道如何在Web界面中激活开发者模式，以便可以访问技术设置菜单和开发人员信息。启用调试模式将暴露一些高级配置选项和字段，这些选项和字段是 隐藏在Odoo中以提高可用性，因为它们不是常用的。</p>
+<h3 id="怎么做…-3"><a href="#怎么做…-3" class="headerlink" title="怎么做…"></a>怎么做…</h3><p>要在Web界面激活开发者模式，请执行以下步骤：</p>
+<ol>
+<li><p>使用管理员账号登录你的Odoo实例。</p>
+</li>
+<li><p>进入<strong>设置</strong>菜单。</p>
+</li>
+<li><p>滚动到页面底部的<strong>Developer Tools</strong>部分：</p>
+<p><img src="/images/Links_to_activate_different_developer_modes.png" alt="Links to activate different developer modes"></p>
+</li>
+<li><p>点击<strong>Activate the developer mode</strong>链接。</p>
+</li>
+<li><p>等待页面刷新。</p>
+<blockquote>
+<p>另外的方法</p>
+<p>你也可以通过编辑URL激活开发人员模式。 在**#**号之前，插入<code>?debug=1</code>。例如，如果您当前的URL是<code>http://localhost:8069/web#menu_id=102&amp;action=94</code>，并且您要启用开发人员模式，则需要将该URL更改为<code>http://localhost:8069/web?debug=1#menu_id=102&amp;action=94</code>。此外，如果要使用资产调试模式，则将URL更改为<code>http://localhost:8069/web?debug=assets#menu_id=102&amp;action=94</code>。</p>
+</blockquote>
+</li>
+</ol>
+<p>要退出开发人员模式，您可以执行以下任一操作：</p>
+<ul>
+<li>编辑URL并在查询字符串中写入<code>?debug</code>&#x3D;0。</li>
+<li>使用在<strong>设置</strong>菜单中的同一位置停用开发者模式。</li>
+<li>单击顶部菜单中的错误图标，然后单击“离开开发者工具”选项。</li>
+</ul>
+<p>许多开发人员正在使用浏览器扩展来切换调试模式。通过此功能，您可以快速切换调试模式而无需访问设置菜单。这些扩展适用于Firefox和Chrome。请看以下屏幕截图，它将帮助您在Chrome商店中识别插件：</p>
+<p><img src="/images/Browser_extension_for_debug_mode.png" alt="Browser extension for debug mode"></p>
+<blockquote>
+<p>自从Odoo v13版本后，调试模式的行为已发生更改。调试模式的状态存储在会话中，这意味着即使将<code>?debug</code>从URL中删除，调试模式仍会处于激活状态。</p>
+</blockquote>
+<h3 id="怎么运行的…-3"><a href="#怎么运行的…-3" class="headerlink" title="怎么运行的…"></a>怎么运行的…</h3><p>在开发者模式下，会发生两件事：</p>
+<ul>
+<li>将鼠标悬停在表单视图中的字段上或列表视图中的列上时，会有提示，提供有关该字段的技术信息（内部名称，类型等）</li>
+<li>带有错误图标的下拉菜单会显示在右上角（用户菜单的旁边），通过这个菜单可访问有关正在显示的模型，各种相关视图定义，工作流，自定义过滤器管理等技术信息。</li>
+</ul>
+<p>开发者模式有一个变体**Developer mode (with assets)**。此模式的行为类似于普通开发者模式，但是，发送到浏览器的JavaScript和CSS代码并未缩小，这意味着您的网络开发工具 浏览器很容易用于调试JavaScript代码（有关详细信息，请参阅第15章，Web客户端开发）。</p>
+<h2 id="更新附加模块列表"><a href="#更新附加模块列表" class="headerlink" title="更新附加模块列表"></a>更新附加模块列表</h2><p>当您添加新模块时，为了在Odoo中列出该模块，您需要更新模块列表。在此Recipe中，您将学习如何更新应用程序列表。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>启动您的实例并使用管理员帐户连接到该实例。执行此操作后，激活开发者模式（如果您不知道如何激活开发者模式，请参上一小节）。</p>
+<h3 id="怎么做…-4"><a href="#怎么做…-4" class="headerlink" title="怎么做…"></a>怎么做…</h3><p>要更新您实例中可用插件模块的列表，您需要执行以下步骤：</p>
+<ol>
+<li><p>打开应用菜单。</p>
+</li>
+<li><p>点击<strong>刷新本地模块列表</strong>。</p>
+<p><img src="/images/Menu_item_to_update_the_apps_list.png" alt="Menu item to update the apps list"></p>
+</li>
+<li><p>在弹出的对话框中点解<strong>更新</strong>按键。</p>
+<p><img src="/images/Dialog_to_update_the_apps_list.png" alt="Dialog to update the apps list"></p>
+</li>
+<li><p>更新结束时，您可以单击<strong>应用程序</strong>条目以查看可用附加模块的更新列表。您需要在搜索框中删除<strong>应用程序</strong>上的默认过滤器，以查看所有模块。</p>
+</li>
+</ol>
+<h3 id="怎么运行的…-4"><a href="#怎么运行的…-4" class="headerlink" title="怎么运行的…"></a>怎么运行的…</h3><p>单击<strong>更新</strong>按钮时，Odoo将读取加载项路径配置变量，对于列表中的每个目录，它将查找包含加载项清单文件的直接子目录，该文件是名为<code>__manifest__.py</code>的文件，存储在附加模块目录。 Odoo会读取清单，希望找到Python字典。除非清单中包含<strong>installable</strong>设置为<strong>False</strong>的实例，否则附加模块元数据将记录在数据库中；如果模块已经存在，则信息将被更新；否则，将创建新记录。如果找不到以前可用的附加模块，则不会从列表中删除该记录。</p>
+<blockquote>
+<p>仅当在初始化数据库后添加了新的加载项路径时才需要更新的应用程序列表。如果在初始化数据库之前将新的加载项路径添加到配置文件中，则无需手动更新模块列表。</p>
+</blockquote>
+<p>总结到目前为止，我们已经学到的知识，安装后，您可以使用以下命令行启动Odoo服务器（如果使用的是虚拟环境，则需要先激活虚拟环境）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 odoo-bin -d odoo-test -i base --addons-path=addons --db-filter=odootest</span><br></pre></td></tr></table></figure>
+
+<p>Once you run the module, you can access Odoo from <a target="_blank" rel="noopener" href="http://localhost:8069/">http://localhost:8069</a>. You can also use a configuration file to run Odoo as follows:</p>
+<p>运行模块后，您可以从<a target="_blank" rel="noopener" href="http://localhost:8069/">http://localhost:8069</a>访问Odoo。还可以使用配置文件来运行Odoo，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./odoo-bin -c myodoo.cfg</span><br></pre></td></tr></table></figure>
+
+<p>启动Odoo服务器后，您可以从<strong>应用</strong>菜单<strong>安装&#x2F;更新</strong>模块。</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>Odoo14开发者指南第一章-安装Odoo开发环境【翻译】</p><p><a href="https://www.junle.org/Odoo14开发者指南第一章-安装Odoo开发环境【翻译】/">https://www.junle.org/Odoo14开发者指南第一章-安装Odoo开发环境【翻译】/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Junle</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-03-18</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2024-03-22</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Odoo%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97/">Odoo开发者指南</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/static/donate_wechat.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%AE%A1%E7%90%86Odoo%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E4%BE%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Odoo14开发者指南第二章-管理Odoo服务器实例【翻译】</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%EF%BC%88Development-Cookbook%EF%BC%89%E7%AC%AC%E5%9B%9B%E7%89%88%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><span class="level-item">Odoo14开发者指南（Development Cookbook）第四版【翻译】</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%AE%89%E8%A3%85Odoo%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/';
+            this.page.identifier = 'Odoo14开发者指南第一章-安装Odoo开发环境【翻译】/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'junles-blog' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/static/avatar.jpg" alt="Junle"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Junle</p><p class="is-size-6 is-block">elnujuw</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Guangdong (CN)</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">58</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">24</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/elnujuw" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/elnujuw"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="/static/email.png"><i class="fas fa-at"></i></a></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-03-22T07:56:01.000Z">2024-03-22</time></p><p class="title"><a href="/RuoYi%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E4%B8%8ESQLServer%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E7%BE%8E%E6%90%AD%E9%85%8D/">RuoYi系统如何与SQLServer数据库完美搭配</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-07-24T05:34:39.000Z">2023-07-24</time></p><p class="title"><a href="/%E6%8E%92%E6%9F%A5SQL-Server%E4%B8%AD%E8%BF%90%E8%A1%8C%E7%BC%93%E6%85%A2%E7%9A%84%E6%9F%A5%E8%AF%A2%E9%97%AE%E9%A2%98/">排查SQL Server中运行缓慢的查询问题</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-12-01T01:35:51.000Z">2022-12-01</time></p><p class="title"><a href="/Print-Spooler-%E6%9C%8D%E5%8A%A1%E6%84%8F%E5%A4%96%E7%BB%88%E6%AD%A2/">Print Spooler 服务意外终止</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-06-16T02:01:36.000Z">2022-06-16</time></p><p class="title"><a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%85%AD%E7%AB%A0-%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9D%97%E6%95%B0%E6%8D%AE%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">Odoo14开发者指南第六章-管理模块数据【翻译】</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-06-14T01:14:57.000Z">2022-06-14</time></p><p class="title"><a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">Odoo14开发者指南第五章-基本服务端开发【翻译】</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2024/03/"><span class="level-start"><span class="level-item">三月 2024</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2023/07/"><span class="level-start"><span class="level-item">七月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/12/"><span class="level-start"><span class="level-item">十二月 2022</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/05/"><span class="level-start"><span class="level-item">五月 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">三月 2022</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/12/"><span class="level-start"><span class="level-item">十二月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/08/"><span class="level-start"><span class="level-item">八月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/04/"><span class="level-start"><span class="level-item">四月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/03/"><span class="level-start"><span class="level-item">三月 2021</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/10/"><span class="level-start"><span class="level-item">十月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/08/"><span class="level-start"><span class="level-item">八月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/06/"><span class="level-start"><span class="level-item">六月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/05/"><span class="level-start"><span class="level-item">五月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/04/"><span class="level-start"><span class="level-item">四月 2020</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">八月 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">七月 2019</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/01/"><span class="level-start"><span class="level-item">一月 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2017/06/"><span class="level-start"><span class="level-item">六月 2017</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/11/"><span class="level-start"><span class="level-item">十一月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/07/"><span class="level-start"><span class="level-item">七月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/03/"><span class="level-start"><span class="level-item">三月 2016</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/01/"><span class="level-start"><span class="level-item">一月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2015/07/"><span class="level-start"><span class="level-item">七月 2015</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/11/"><span class="level-start"><span class="level-item">十一月 2014</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/08/"><span class="level-start"><span class="level-item">八月 2014</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/06/"><span class="level-start"><span class="level-item">六月 2014</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Arduino/"><span class="tag">Arduino</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Chart-js/"><span class="tag">Chart.js</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ERP5/"><span class="tag">ERP5</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ESP8266/"><span class="tag">ESP8266</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Java/"><span class="tag">Java</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Linux/"><span class="tag">Linux</span><span class="tag">10</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Metabase/"><span class="tag">Metabase</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/MySQL/"><span class="tag">MySQL</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Odoo/"><span class="tag">Odoo</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Odoo%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97/"><span class="tag">Odoo开发者指南</span><span class="tag">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/OpenWRT/"><span class="tag">OpenWRT</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/PostgreSQL/"><span class="tag">PostgreSQL</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Python/"><span class="tag">Python</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/RaspberryPI/"><span class="tag">RaspberryPI</span><span class="tag">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/RuoYi/"><span class="tag">RuoYi</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SQLServer/"><span class="tag">SQLServer</span><span class="tag">8</span></a></div><div class="control"><a class="tags has-addons" href="/tags/STM32/"><span class="tag">STM32</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SlapOS/"><span class="tag">SlapOS</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Superset/"><span class="tag">Superset</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Windows/"><span class="tag">Windows</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Zope/"><span class="tag">Zope</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB/"><span class="tag">工具分享</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/"><span class="tag">数据可视化</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%AC%94%E8%AE%B0/"><span class="tag">笔记</span><span class="tag">1</span></a></div></div></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/static/logos.jpeg" alt="Junle&#039;s Blog" height="28"></a><p class="is-size-7"><span>&copy; 2024 Junle</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

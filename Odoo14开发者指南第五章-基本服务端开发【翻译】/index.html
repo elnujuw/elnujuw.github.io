@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Odoo14开发者指南第五章-基本服务端开发【翻译】 - Junle&#039;s Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Junle&#039;s Blog"><meta name="msapplication-TileImage" content="/static/logos.jpeg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Junle&#039;s Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="在第四章《应用模型》中，我们看到了如何在自定义模块中声明或扩展业务模型。那一章涵盖了计算字段的编写方法，以及约束字段的方法。本章重点介绍Odoo方法定义、记录集操作和扩展继承方法的服务器端开发基础知识。有了这个，您将能够在Odoo模块中添加&amp;#x2F;修改业务逻辑。"><meta property="og:type" content="blog"><meta property="og:title" content="Odoo14开发者指南第五章-基本服务端开发【翻译】"><meta property="og:url" content="https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><meta property="og:site_name" content="Junle&#039;s Blog"><meta property="og:description" content="在第四章《应用模型》中，我们看到了如何在自定义模块中声明或扩展业务模型。那一章涵盖了计算字段的编写方法，以及约束字段的方法。本章重点介绍Odoo方法定义、记录集操作和扩展继承方法的服务器端开发基础知识。有了这个，您将能够在Odoo模块中添加&amp;#x2F;修改业务逻辑。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.junle.org/img/og_image.png"><meta property="article:published_time" content="2022-06-14T01:14:57.000Z"><meta property="article:modified_time" content="2024-03-22T06:43:55.676Z"><meta property="article:author" content="Junle"><meta property="article:tag" content="Odoo开发者指南"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://www.junle.org/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"},"headline":"Odoo14开发者指南第五章-基本服务端开发【翻译】","image":["https://www.junle.org/img/og_image.png"],"datePublished":"2022-06-14T01:14:57.000Z","dateModified":"2024-03-22T06:43:55.676Z","author":{"@type":"Person","name":"Junle"},"publisher":{"@type":"Organization","name":"Junle's Blog","logo":{"@type":"ImageObject","url":"https://www.junle.org/static/logos.jpeg"}},"description":"在第四章《应用模型》中，我们看到了如何在自定义模块中声明或扩展业务模型。那一章涵盖了计算字段的编写方法，以及约束字段的方法。本章重点介绍Odoo方法定义、记录集操作和扩展继承方法的服务器端开发基础知识。有了这个，您将能够在Odoo模块中添加&#x2F;修改业务逻辑。"}</script><link rel="canonical" href="https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><link rel="alternate" href="/atom.xml" title="Junle&#039;s Blog" type="application/atom+xml"><link rel="icon" href="/static/logos.jpeg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/monokai-sublime.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/static/logos.jpeg" alt="Junle&#039;s Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/tags">标签</a></div><div class="navbar-end"><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2022-06-14T01:14:57.000Z" title="2022/6/14 09:14:57">2022-06-14</time>发表</span><span class="level-item"><time dateTime="2024-03-22T06:43:55.676Z" title="2024/3/22 14:43:55">2024-03-22</time>更新</span><span class="level-item">2 小时读完 (大约14779个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">Odoo14开发者指南第五章-基本服务端开发【翻译】</h1><div class="content"><p>在<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第四章《应用模型》</a>中，我们看到了如何在自定义模块中声明或扩展业务模型。那一章涵盖了计算字段的编写方法，以及约束字段的方法。本章重点介绍Odoo方法定义、记录集操作和扩展继承方法的服务器端开发基础知识。有了这个，您将能够在Odoo模块中添加&#x2F;修改业务逻辑。</p>
+<p>在本章中，我们将介绍以下内容：</p>
+<ul>
+<li><p><a href="#%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E6%96%B9%E6%B3%95%E5%92%8C%E4%BD%BF%E7%94%A8API%E8%A3%85%E9%A5%B0%E5%99%A8">定义模型方法和使用API装饰器</a></p>
+</li>
+<li><p><a href="#%E5%90%91%E7%94%A8%E6%88%B7%E6%8A%A5%E5%91%8A%E9%94%99%E8%AF%AF">向用户报告错误</a></p>
+</li>
+<li><p><a href="#%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%A9%BA%E8%AE%B0%E5%BD%95%E9%9B%86">获取不同模型的空记录集</a></p>
+</li>
+<li><p><a href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E8%AE%B0%E5%BD%95">创建新记录</a></p>
+</li>
+<li><p><a href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95%E9%9B%86%E8%AE%B0%E5%BD%95%E7%9A%84%E5%80%BC">更新记录集记录的值</a></p>
+</li>
+<li><p><a href="#%E6%90%9C%E7%B4%A2%E8%AE%B0%E5%BD%95">搜索记录</a></p>
+</li>
+<li><p><a href="#%E7%BB%84%E5%90%88%E8%AE%B0%E5%BD%95%E9%9B%86">组合记录集</a></p>
+</li>
+<li><p><a href="#%E8%BF%87%E6%BB%A4%E8%AE%B0%E5%BD%95%E9%9B%86">过滤记录集</a></p>
+</li>
+<li><p><a href="#%E9%81%8D%E5%8E%86%E8%AE%B0%E5%BD%95%E9%9B%86%E5%85%B3%E8%81%94">遍历记录集关联</a></p>
+</li>
+<li><p><a href="#%E6%8E%92%E5%BA%8F%E8%AE%B0%E5%BD%95%E9%9B%86">排序记录集</a></p>
+</li>
+<li><p><a href="#%E6%89%A9%E5%B1%95%E6%A8%A1%E5%9E%8B%E4%B8%AD%E5%AE%9A%E4%B9%89%E7%9A%84%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91">扩展模型中定义的业务逻辑</a></p>
+</li>
+<li><p><a href="#%E6%89%A9%E5%B1%95write-%E5%92%8Ccreate">扩展<strong>write()</strong> 和<strong>create()</strong></a></p>
+</li>
+<li><p><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%90%9C%E7%B4%A2%E8%AE%B0%E5%BD%95%E7%9A%84%E6%96%B9%E5%BC%8F">自定义搜索记录的方式</a></p>
+</li>
+<li><p><a href="#%E4%BD%BF%E7%94%A8read-group-%E5%88%86%E7%BB%84%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE">使用<strong>read_group()</strong> 分组获取数据</a></p>
+</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="技术要求"><a href="#技术要求" class="headerlink" title="技术要求"></a>技术要求</h2><p>本章的技术要求包括可用的Odoo平台。</p>
+<p>本章中使用的代码可以在<a target="_blank" rel="noopener" href="https://github.com/PacktPublishing/Odoo-14-Development-Cookbook-Fourth-Edition/tree/master/Chapter05">https://github.com/PacktPublishing/Odoo-14-Development-Cookbook-Fourth-Edition/tree/master/Chapter05</a>下载。</p>
+<h2 id="定义模型方法和使用API装饰器"><a href="#定义模型方法和使用API装饰器" class="headerlink" title="定义模型方法和使用API装饰器"></a>定义模型方法和使用API装饰器</h2><p>在Odoo模型中，类定义了字段和业务逻辑方法。在<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第四章《应用模型》</a>中，我们看到了如何将字段添加到模型中。现在我们将看到如何向模型添加方法和业务逻辑。</p>
+<p>在本节中我们将看到如何编写一个可以被用户界面中的按钮或应用程序中的另一段代码调用的方法。此方法将作用于<strong>Library Books</strong> 并执行所需的操作以更改所选书籍的状态。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>本节假设你已经准备好一个实例，并且<strong>my_library</strong> 模块可用，如<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第三章《创建Odoo附加模块》</a>中所述。 您需要在<strong>Library Books</strong> 模型中添加一个<strong>state</strong> 字段，其定义如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> models, fields, api</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># [...]</span></span><br><span class="line">    state = fields.Selection([</span><br><span class="line">        (<span class="string">&#x27;draft&#x27;</span>, <span class="string">&#x27;Unavailable&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;available&#x27;</span>, <span class="string">&#x27;Available&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;borrowed&#x27;</span>, <span class="string">&#x27;Borrowed&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;lost&#x27;</span>, <span class="string">&#x27;Lost&#x27;</span>)],</span><br><span class="line">        <span class="string">&#x27;State&#x27;</span>, default=<span class="string">&quot;draft&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>请参阅<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第三章《创建Odoo附加模块》</a>，以获取更多信息。</p>
+<h3 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>要在library books上定义一个方法来更改所选书籍的状态，您需要在模型定义中添加以下代码：</p>
+<ol>
+<li><p>添加辅助方法来检查是否允许状态转换：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.model</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_allowed_transition</span>(<span class="params">self, old_state, new_state</span>):</span><br><span class="line">    allowed = [(<span class="string">&#x27;draft&#x27;</span>, <span class="string">&#x27;available&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;available&#x27;</span>, <span class="string">&#x27;borrowed&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;borrowed&#x27;</span>, <span class="string">&#x27;available&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;available&#x27;</span>, <span class="string">&#x27;lost&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;borrowed&#x27;</span>, <span class="string">&#x27;lost&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;lost&#x27;</span>, <span class="string">&#x27;available&#x27;</span>)]</span><br><span class="line">    <span class="keyword">return</span> (old_state, new_state) <span class="keyword">in</span> allowed</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加一个方法以将某些书籍的状态更改为作为参数传递的新状态：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">change_state</span>(<span class="params">self, new_state</span>):</span><br><span class="line">    <span class="keyword">for</span> book <span class="keyword">in</span> self:</span><br><span class="line">        <span class="keyword">if</span> book.is_allowed_transition(book.state, new_state):</span><br><span class="line">            book.state = new_state</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过调用<strong>change_state</strong> 方法添加一个更改图书状态的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">make_available</span>(<span class="params">self</span>):</span><br><span class="line">    self.change_state(<span class="string">&#x27;available&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">make_borrowed</span>(<span class="params">self</span>):</span><br><span class="line">    self.change_state(<span class="string">&#x27;borrowed&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">make_lost</span>(<span class="params">self</span>):</span><br><span class="line">    self.change_state(<span class="string">&#x27;lost&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<strong>&lt;form&gt;</strong> 视图中添加一个按钮和状态栏。这将帮助我们从用户界面触发这些方法：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">name</span>=<span class="string">&quot;make_available&quot;</span> <span class="attr">string</span>=<span class="string">&quot;Make Available&quot;</span> <span class="attr">type</span>=<span class="string">&quot;object&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">name</span>=<span class="string">&quot;make_borrowed&quot;</span> <span class="attr">string</span>=<span class="string">&quot;Make Borrowed&quot;</span> <span class="attr">type</span>=<span class="string">&quot;object&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">name</span>=<span class="string">&quot;make_lost&quot;</span> <span class="attr">string</span>=<span class="string">&quot;Make Lost&quot;</span> <span class="attr">type</span>=<span class="string">&quot;object&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;state&quot;</span> <span class="attr">widget</span>=<span class="string">&quot;statusbar&quot;</span>/&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span>   </span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>更新或安装模块以使这些更改可用。</p>
+<h3 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h3><p>本节的代码定义了一些方法。它们是普通的Python方法，它们的第一个参数是<strong>self</strong> ，也可以有其他参数。一些方法用<strong>odoo.api</strong> 模块中的装饰器装饰。</p>
+<blockquote>
+<p><strong>提示</strong><br>API装饰器最初是在Odoo 9.0中引入的，用于支持新旧框架。从Odoo 10.0开始，不再支持旧的API，但仍然使用一些装饰器，例如<strong>@api.model</strong> 。</p>
+</blockquote>
+<p>编写新方法时，如果不使用任何装饰器，则该方法将在记录集上执行。在这样的方法中，self是一个可以引用任意数量的数据库记录（这包括空记录集），并且代码通常会循环遍历<strong>self</strong> 中的记录以对每个单独的记录执行某些操作。</p>
+<p><strong>@api.model</strong> 装饰器类似，但它用于仅对模型很重要的方法，而不是记录集的内容，方法不对其进行操作。 这个概念类似于Python的<strong>@classmethod</strong> 装饰器。</p>
+<p>在第1步中，我们创建了<strong>is_allowed_transition()</strong> 方法。此方法的目的是验证从一种状态到另一种状态的转换是否有效。允许列表中的元组是可用的转换。例如，我们希望不允许从<strong>lost</strong> 状态转换到<strong>borrowed</strong> 状态，这就是我们没有加入<code>(&#39;lost, &#39;borrowed&#39;)</code>的原因。</p>
+<p>在第2步中，我们创建了<strong>change_state()</strong> 方法。此方法的目的是更改图书的状态。调用此方法时，它将书的状态更改为<strong>new_state</strong> 参数给定的状态。如果允许转换它只会更改图书状态。我们在这里使用了一个<strong>for</strong> 循环，因为<strong>self</strong> 可以包含多个记录集。</p>
+<p>在第3步中，我们通过调用<strong>change_state()</strong> 方法创建了更改图书状态的方法。在我们的例子中，这个方法将由添加到用户界面的按钮触发。</p>
+<p>在第4步中，我们在<strong>&lt;form&gt;</strong> 视图中添加了<strong>&lt;button&gt;</strong> 标签。 单击此按钮后，Odoo Web 客户端将调用<strong>name</strong> 属性中的Python函数。 请参阅第九章《后端视图》中的<em>向表单添加按钮</em> 一节，了解如何从用户界面调用此类方法。我们还添加了带有状态栏小部件的状态字段，以在<strong>&lt;form&gt;</strong> 视图中显示图书的状态。</p>
+<p>当用户从用户界面单击按钮时，将调用步骤3中的方法之一。在这里，<strong>self</strong> 将是包含<strong>library.book</strong> 模型记录的记录集。之后我们调用<strong>change_state()</strong> 方法并根据单击的按钮传递适当的参数。</p>
+<p>当调用<strong>change_state()</strong> 时，<strong>self</strong> 是<strong>library.book</strong> 模型的相同记录集。<strong>change_state()</strong> 方法的主体循环遍历<strong>self</strong> 以处理记录集中的每一本书。循环遍历<strong>self</strong> 一开始看起来很奇怪，但你很快就会习惯这种模式。</p>
+<p>在循环内部<strong>change_state()</strong> 调用<strong>is_allowed_transition()</strong> ,它使用<strong>book</strong> 局部变量进行的，但它可以在<strong>library.book</strong> 模型的任何记录集上进行，包括例如<strong>self</strong> ，因为<strong>is_allowed_transition()</strong> 是使用<strong>@api.model</strong> 修饰的。如果允许转换，则<strong>change_state()</strong> 通过为记录集的属性分配一个值来将新状态分配给书籍。这仅对长度为<strong>1</strong> 的记录集有效，用于确保和遍历<strong>self</strong> 的情况一致。</p>
+<h2 id="向用户报告错误"><a href="#向用户报告错误" class="headerlink" title="向用户报告错误"></a>向用户报告错误</h2><p>在方法执行期间，有时需要中止处理，因为用户请求的操作无效或已满足错误条件。本节向你展示了如何通过显示有用的错误消息来管理这些情况。</p>
+<h3 id="准备工作-1"><a href="#准备工作-1" class="headerlink" title="准备工作"></a>准备工作</h3><p>本节假设你已经准备好一个实例，并且<strong>my_library</strong> 插件模块可用，如前一节中所述。</p>
+<h2 id="实现步骤-1"><a href="#实现步骤-1" class="headerlink" title="实现步骤"></a>实现步骤</h2><p>我们将对上一节中的<strong>change_state</strong> 方法进行改造，并在用户尝试更改<strong>is_allowed_transition</strong> 方法不允许的状态时显示有用的消息。 执行以下步骤开始：</p>
+<ol>
+<li><p>在Python文件的开头添加以下导入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo.exceptions <span class="keyword">import</span> UserError</span><br><span class="line"><span class="keyword">from</span> odoo.tools.translate <span class="keyword">import</span> _</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改<strong>change_state</strong> 方法并从<strong>else</strong> 部分抛出<strong>UserError</strong> 异常：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">change_state</span>(<span class="params">self, new_state</span>):</span><br><span class="line">    <span class="keyword">for</span> book <span class="keyword">in</span> self:</span><br><span class="line">        <span class="keyword">if</span> book.is_allowed_transition(book.state, new_state):</span><br><span class="line">            book.state = new_state</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            msg = _(<span class="string">&#x27;Moving from %s to %s is not allowed&#x27;</span>) % (book.state, new_state)</span><br><span class="line">            <span class="keyword">raise</span> UserError(msg)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="运行原理-1"><a href="#运行原理-1" class="headerlink" title="运行原理"></a>运行原理</h3><p>当Python中抛出异常时，它会向上传播调用堆栈，直到它被处理。在Odoo中，<strong>RPC (remote procedure call)</strong> 层会响应Web客户端捕获所有异常，并根据异常类在Web客户端上触发不同的行为。</p>
+<p><strong>odoo.exceptions</strong> 中未定义的任何异常都将作为内部服务器错误（<strong>HTTP状态500</strong> ）与堆栈跟踪一起处理。<strong>UserError</strong> 将在用户界面中显示错误消息。本节的代码引发<strong>UserError</strong> 以确保消息以用户友好的方式显示。在所有情况下，当前数据库事务都会回滚。</p>
+<p>我们正在使用一个名字奇怪的函数：<strong>_()</strong>，它是在<strong>odoo.tools.translate</strong> 中定义的。此函数用于将字符串标记为可翻译，并在运行时根据上下文中的语言检索已翻译的字符串。有关这方面的更多信息，请查阅第十一章《国际化》。</p>
+<blockquote>
+<p><strong>重要提示</strong><br>使用<strong>_()</strong> 函数时，请确保只传递带有插值占位符的字符串，而不是整个插值字符串。例如，<strong>_(‘Warning: could not find %s’) % value</strong> 是正确的，但<strong>_(‘Warning: could not find %s’ % value)</strong> 是不正确的，因为第一个字符串不能在翻译数据库中找到替换值。</p>
+</blockquote>
+<h3 id="扩展内容"><a href="#扩展内容" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>有时您正在处理容易出错的代码，这意味着您正在执行的操作可能会产生错误。Odoo将捕获此错误并向用户显示回溯。如果您不想向用户显示完整的错误日志，您可以缓存错误并使用有意义的消息引发自定义异常。在提供的示例中，我们从<strong>try…cache</strong> 块生成<strong>UserError</strong>，因此Odoo现在不会显示完整的错误日志，而是显示带有有意义消息的警告：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">post_to_webservice</span>(<span class="params">self, data</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        req = requests.post(<span class="string">&#x27;http://my-test-service.com&#x27;</span>, data=data, timeout=<span class="number">10</span>)</span><br><span class="line">        content = req.json()</span><br><span class="line">    <span class="keyword">except</span> IOError:</span><br><span class="line">        error_msg = _(<span class="string">&quot;Something went wrong during data submission&quot;</span>)</span><br><span class="line">        <span class="keyword">raise</span> UserError(error_msg)</span><br><span class="line">    <span class="keyword">return</span> content</span><br></pre></td></tr></table></figure>
+
+<p>在<strong>odoo.exceptions</strong> 中定义了更多的异常类，它们都派生自基本的遗留的<strong>except_orm</strong> 异常类。它们中的大多数仅在内部使用，除了以下内容：</p>
+<ul>
+<li><strong>ValidationError</strong> ：当不遵守字段上的Python约束时会引发此异常。请参阅<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/#%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E7%BA%A6%E6%9D%9F%E9%AA%8C%E8%AF%81">第四章《应用模型》</a><em>向模型添加约束验证</em> 以获取更多信息。</li>
+<li><strong>AccessError</strong> ：当用户尝试访问不允许的内容时，通常会自动生成此错误。如果要显示代码中的访问错误，可以手动引发错误。</li>
+<li><strong>RedirectWarning</strong> ：使用此错误您可以显示带有错误消息的重定向按钮。你需要给这个异常传递两个参数：第一个参数是action ID，第二个参数是错误信息。</li>
+<li><strong>Warning</strong> ：在Odoo 8.0中，<strong>odoo.exceptions.Warning</strong> 与9.0及更高版本中的<strong>UserError</strong> 所起的作用是相同的。它现在已被弃用，因为该名称具有欺骗性（这是一个错误，而不是警告）并且它与Python内置的警告类发生冲突。它只是为了向后兼容而保留的，您应该在代码中使用<strong>UserError</strong> 。</li>
+</ul>
+<h2 id="获取不同模型的空记录集"><a href="#获取不同模型的空记录集" class="headerlink" title="获取不同模型的空记录集"></a>获取不同模型的空记录集</h2><p>在编写Odoo代码时，当前模型的方法可以通过<strong>self</strong> 获得。如果您需要处理不同的模型，则无法直接实例化该模型的类；首先您需要获取该模型的记录集。</p>
+<p>本节向您展示了如何在模型方法中为在Odoo中注册的任何模型获取空记录集。</p>
+<h3 id="准备工作-2"><a href="#准备工作-2" class="headerlink" title="准备工作"></a>准备工作</h3><p>本节将重用<strong>my_library</strong> 附加模块中库示例的设置。</p>
+<p>我们将在<strong>library.book</strong> 模型中编写一个小方法并搜索所有<strong>library.members</strong>。为此我们需要为<strong>library.members</strong> 获取一个空记录集。确保您已添加<strong>library.members</strong> 模型和该模型的访问权限。</p>
+<h3 id="实现步骤-2"><a href="#实现步骤-2" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>要在<strong>library.book</strong> 的方法中获取<strong>library.members</strong> 的记录集，您需要执行以下步骤：</p>
+<ol>
+<li><p>在<strong>LibraryBook</strong> 类中添加名为<strong>get_all_library_members</strong> 方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">log_all_library_members</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># This is an empty recordset of model library.member</span></span><br><span class="line">        library_member_model = self.env[<span class="string">&#x27;library.member&#x27;</span>]</span><br><span class="line">        all_members = library_member_model.search([])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;ALL MEMBERS:&quot;</span>, all_members)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<strong>&lt;form&gt;</strong> 视图添加一个按钮来调用我们的方法：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">name</span>=<span class="string">&quot;log_all_library_members&quot;</span> <span class="attr">string</span>=<span class="string">&quot;Log Members&quot;</span> <span class="attr">type</span>=<span class="string">&quot;object&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>更新模块以应用更改。之后您将在本书的<strong>&lt;form&gt;</strong> 视图中看到<strong>Log Members</strong> 按钮。单击该按钮后，您将在服务器日志中看到该成员的记录集。</p>
+<h3 id="运行原理-2"><a href="#运行原理-2" class="headerlink" title="运行原理"></a>运行原理</h3><p>在启动时Odoo加载所有模块并组合从模型派生的各种类，并定义或扩展给定模型。这些类存储在Odoo注册表中，按名称索引。任何记录集的<strong>env</strong> 属性（可用作<strong>self.env</strong> ）是<strong>odoo.api</strong> 模块中定义的<strong>Environment</strong> 类的一个实例。</p>
+<p><strong>Environment</strong> 类在Odoo开发中起着核心作用：</p>
+<ul>
+<li>它通过模拟Python字典提供对注册表的快捷访问。如果您知道要查找的模型的名称，可通过<strong>self.env[model_name]</strong> 来获取该模型的空记录集。此外，记录集将共享<strong>self</strong> 的环境。</li>
+<li>它有一个<strong>cr</strong> 属性，这是一个可以用来传递原生<strong>SQL</strong> 查询的数据库游标。有关这方面的更多信息，请参阅第八章《高级服务器端开发》中的<em>执行原生SQL查询</em> 。</li>
+<li>它有一个<strong>user</strong> 属性，是对当前执行的用户的引用。请查看第八章《高级服务器端开发》中的<em>更改执行操作的用户</em> 以了解更多信息。</li>
+<li>它有一个<strong>context</strong> 属性，这是一个包含调用上下文的字典。这包括有关用户语言、时区、当前记录选择等的信息。有关这方面的更多信息，请参阅第八章《高级服务器端开发》中的<em>使用修改的上下文调用方法</em> 方法一节。</li>
+</ul>
+<p>对<strong>search()</strong> 的调用将在稍后的<a href="#%E6%90%9C%E7%B4%A2%E8%AE%B0%E5%BD%95">搜索记录</a>中解释</p>
+<blockquote>
+<p><strong>也可以看看</strong><br>有时您想使用环境的修改版本，一个这样的例子是您想要一个具有不同用户和语言的环境。在第八章《高级服务器端开发》中您将学习如何在运行时修改环境。</p>
+</blockquote>
+<h2 id="创建新记录"><a href="#创建新记录" class="headerlink" title="创建新记录"></a>创建新记录</h2><p>编写业务逻辑方法时的一个常见的要求是创建新记录。本节解释了如何创建<strong>library.book.category</strong> 模型的记录。对于我们的示例，我们将为<strong>library.book.category</strong> 模型创建虚拟类别的方法。要触发此方法，我们将在<strong>&lt;form&gt;</strong> 视图中添加一个按钮。</p>
+<h3 id="准备工作-3"><a href="#准备工作-3" class="headerlink" title="准备工作"></a>准备工作</h3><p>您需要知道要为其创建记录的模型的结构，尤其是它们的名称和类型，以及这些字段上存在的任何约束（例如其中一些是否是强制性的）。</p>
+<p>本节我们将重用<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第四章《应用模型》</a>的<strong>my_library</strong> 模块。看下面的例子快速回忆<strong>library.book.category</strong> 模型：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BookCategory</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.book.category&#x27;</span></span><br><span class="line">    name = fields.Char(<span class="string">&#x27;Category&#x27;</span>)</span><br><span class="line">    description = fields.Text(<span class="string">&#x27;Description&#x27;</span>)</span><br><span class="line">    parent_id = fields.Many2one(</span><br><span class="line">        <span class="string">&#x27;library.book.category&#x27;</span>,</span><br><span class="line">        string=<span class="string">&#x27;Parent Category&#x27;</span>,</span><br><span class="line">        ondelete=<span class="string">&#x27;restrict&#x27;</span>,</span><br><span class="line">        index=<span class="literal">True</span></span><br><span class="line">    )</span><br><span class="line">    child_ids = fields.One2many(</span><br><span class="line">        <span class="string">&#x27;library.book.category&#x27;</span>, <span class="string">&#x27;parent_id&#x27;</span>,</span><br><span class="line">        string=<span class="string">&#x27;Child Categories&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>确保您已经为<strong>library.book.category</strong> 模型添加了菜单、视图和访问权限。</p>
+<h2 id="实现步骤-3"><a href="#实现步骤-3" class="headerlink" title="实现步骤"></a>实现步骤</h2><p>要创建具有一些子类别，您需要执行以下步骤：</p>
+<ol>
+<li><p>在<strong>library.book.category</strong> 模型中创建一个名为<strong>create_categories</strong> 的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">create_categories</span>(<span class="params">self</span>):</span><br><span class="line">   ......</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在此方法的主体内，为第一个子类别的字段准备一个值字典：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">categ1 = &#123;</span><br><span class="line">    <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;Child category 1&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;description&#x27;</span>: <span class="string">&#x27;Description for child 1&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为第二类字段准备一个值字典：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">categ2 = &#123;</span><br><span class="line">    <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;Child category 2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;description&#x27;</span>: <span class="string">&#x27;Description for child 2&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为父类别的字段准备一个值字典：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">parent_category_val = &#123;</span><br><span class="line">    <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;Parent category&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;email&#x27;</span>: <span class="string">&#x27;Description for parent category&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;child_ids&#x27;</span>: [</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, categ1),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, categ2),</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调用<strong>create()</strong> 方法创建新记录：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">record = self.env[<span class="string">&#x27;library.book.category&#x27;</span>].create(parent_category_val)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<strong>&lt;form&gt;</strong> 视图中添加一个按钮以从用户界面触发<strong>create_categories</strong> 方法：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">name</span>=<span class="string">&quot;create_categories&quot;</span> <span class="attr">string</span>=<span class="string">&quot;Create Categories&quot;</span> <span class="attr">type</span>=<span class="string">&quot;object&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="运行原理-3"><a href="#运行原理-3" class="headerlink" title="运行原理"></a>运行原理</h3><p>要为模型创建新记录，我们可以在与模型相关的任何记录集上调用<strong>create(values)</strong> 方法。此方法返回一个长度为<strong>1</strong> 的新记录集，其中包含新记录，其字段值在值字典中指定。</p>
+<p>在字典中键是字段的名称，值是对应于字段的值。根据字段类型您需要为值传递不同的Python数据类型：</p>
+<ul>
+<li><strong>Text</strong> 字段对应Python的字符串。</li>
+<li><strong>Float</strong> 和<strong>Interger</strong> 字段对应Python的浮点型和整型。</li>
+<li><strong>Boolean</strong> 字段对应Python的布尔型。</li>
+<li><strong>Date</strong> 字段对应Python的<strong>datetime.date</strong>对象。</li>
+<li><strong>Datetime</strong> 字段对应Python的<strong>datetime.datetime</strong>对象。</li>
+<li><strong>Binary</strong> 字段的值是Base64编码的字符串。Python标准库中的<strong>base64</strong> 模块提供了诸如<strong>encodebytes(bytestring)</strong> 之类的方法来对Base64 中的字符串进行编码。</li>
+<li><strong>Many2one</strong> 字段的值以整数形式给出，该整数必须是关联记录的数据库ID。</li>
+<li><strong>One2many</strong> 和<strong>Many2many</strong> 字段使用特殊语法，该值是一个包含三个元素的元组的列表，如下所示：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Tuple</th>
+<th align="center">Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(0, 0, dict_val)</td>
+<td align="center">创建与主记录关联的新记录。</td>
+</tr>
+<tr>
+<td>(6, 0, id_list)</td>
+<td align="center">在正在创建的记录和现有记录之间创建关联，其ID在名为<code>id_list</code>的Python列表中。 注意：当在<code>One2many</code> 字段上使用时，这会删除此前关联中的记录。</td>
+</tr>
+</tbody></table>
+<p>本节中我们为我们想要创建的公司中的两个联系人创建字典，然后我们使用我们解释过的<strong>(0, 0, dict_val)</strong> 语法在正在创建的公司的字典的<strong>child_ids</strong> 条目中使用这些字典。</p>
+<p>在步骤5中调用<strong>create()</strong> 时，会创建三个记录：</p>
+<ul>
+<li>一个用于父书类别，由<strong>create</strong> 返回。</li>
+<li>子书类别的两条记录，在<strong>record.child_ids</strong> 中可用。</li>
+</ul>
+<h3 id="扩展内容-1"><a href="#扩展内容-1" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>如果模型为某些字段定义了一些默认值，则不需要做任何特别的事情。<strong>create()</strong> 将自动处理字典中不存在的字段的默认值。</p>
+<p><strong>create()</strong> 方法还支持批量创建记录。要批量创建多条记录，您需要将多个值的列表传递给<strong>create()</strong> 方法，如下例所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">categ1 = &#123;</span><br><span class="line">    <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;Category 1&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;description&#x27;</span>: <span class="string">&#x27;Description for Category 1&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">categ2 = &#123;</span><br><span class="line">    <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;Category 2&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;description&#x27;</span>: <span class="string">&#x27;Description for Category 2&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">multiple_records = self.env[<span class="string">&#x27;library.book.category&#x27;</span>].create([categ1, categ2])</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="更新记录集记录的值"><a href="#更新记录集记录的值" class="headerlink" title="更新记录集记录的值"></a>更新记录集记录的值</h2><p>业务逻辑通常要求我们通过更改某些字段的值来更新记录。本节向你展示了如何修改partner的<strong>date</strong> 字段。</p>
+<h3 id="准备工作-4"><a href="#准备工作-4" class="headerlink" title="准备工作"></a>准备工作</h3><p>本章将使用与上一节相同的<strong>library.book</strong> 定义。您可以参考这个简化的定义来了解这些字段。</p>
+<p>我们在<strong>library.book</strong> 模型中有<strong>date_release</strong> 字段。出于说明目的，我们将通过单击按钮更新此字段。</p>
+<h3 id="实现步骤-4"><a href="#实现步骤-4" class="headerlink" title="实现步骤"></a>实现步骤</h3><ol>
+<li><p>要实现更新书籍的<strong>data_update</strong> 字段，你可以新增一个名为<strong>change_update_date()</strong> 的方法，它的定义如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">change_release_date</span>(<span class="params">self</span>):</span><br><span class="line">    self.ensure_one()</span><br><span class="line">    self.date_release = fields.Date.today()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后你需要在<strong>&lt;form&gt;</strong> 视图中添加一个按钮，定义如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">name</span>=<span class="string">&quot;change_release_date&quot;</span> <span class="attr">string</span>=<span class="string">&quot;Update Date&quot;</span> <span class="attr">type</span>=<span class="string">&quot;object&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>重新启动服务器并更新<strong>my_library</strong> 模块以查看更改。单击更新日期按钮后，更新日期将更改。</p>
+</li>
+</ol>
+<h3 id="运行原理-4"><a href="#运行原理-4" class="headerlink" title="运行原理"></a>运行原理</h3><p>该方法首先通过调用<strong>ensure_one()</strong> 检查作为<strong>self</strong> 传递的<strong>book</strong> 记录集是否恰好包含一条记录。如果不是这种情况，此方法将引发异常，并且处理将中止。这是必要的，因为我们不想更改多条记录的日期。如果要更新多个值，可以删除<strong>ensure_one()</strong> 并使用记录集上的循环更新属性。</p>
+<p>最后，该方法修改书籍记录的属性值。它使用当前日期更新<strong>date_release</strong> 字段。只需修改记录集的字段属性，就可以进行写操作。</p>
+<h3 id="扩展内容-2"><a href="#扩展内容-2" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>如果您想将新值写入记录字段，可以使用三个选项：</p>
+<ul>
+<li><p>选项一是本节中使用的选项。它通过将值直接分配给表示记录字段的属性，这种方法可用在所有上下文中。它不可能一次性为所有记录集元素赋值，因此您需要遍历记录集，除非您确定您只处理一条记录。</p>
+</li>
+<li><p>选项二是通过将字典映射字段名称传递给您要设置的值来使用<strong>update()</strong> 方法来赋值。这也仅适用于长度为<strong>1</strong> 的记录集。当您需要在同一笔记录一次更新多个字段的值时，它可以节省一些输入。将本节的第2步重写为以下内容来使用此选项：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">change_update_date</span>(<span class="params">self</span>):</span><br><span class="line">    self.ensure_one()</span><br><span class="line">    self.update(&#123;</span><br><span class="line">        <span class="string">&#x27;date_release&#x27;</span>: fields.Datetime.now(),</span><br><span class="line">        <span class="string">&#x27;another_field&#x27;</span>: <span class="string">&#x27;value&#x27;</span></span><br><span class="line">         ...</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>选项三是调用<strong>write()</strong> 方法，传递一个将字段名称映射到您要设置的值的字典。 此方法适用于任意大小的记录集，并且当前两个选项对每个记录和每个字段执行一次数据库调用时，将在一次数据库操作中使用指定值更新所有记录。但是，它有一些限制：如果数据库中还没有记录，它就不起作用（有关这方面的更多信息，请参阅第八章《高级服务器端开发》中的关于<em>定义onchange方法</em> ）。此外，在编写关联字段时，它需要一种特殊的格式，类似于<strong>create()</strong> 方法使用的格式。查看下表以了解用于为关系字段生成不同值的格式：</p>
+<table>
+<thead>
+<tr>
+<th>Tuple</th>
+<th align="center">Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(0, 0, dict_val)</td>
+<td align="center">这将创建一个与主记录关联的新记录。</td>
+</tr>
+<tr>
+<td>(1, id, dict_val)</td>
+<td align="center">这将使用提供的值更新具有指定ID的关联记录。</td>
+</tr>
+<tr>
+<td>(2, id)</td>
+<td align="center">这将从关联记录中删除具有指定ID的记录，并从数据库中删除。</td>
+</tr>
+<tr>
+<td>(3, id)</td>
+<td align="center">这将从关联记录中删除具有指定ID的记录。该记录不会从数据库中删除。</td>
+</tr>
+<tr>
+<td>(4, id)</td>
+<td align="center">这会将具有提供的ID的现有记录添加到相关记录列表中。</td>
+</tr>
+<tr>
+<td>(5, )</td>
+<td align="center">这将删除所有其他相关记录，相当于为每个关联id调用**(3, id)** 。</td>
+</tr>
+<tr>
+<td>(6, 0, id_list)</td>
+<td align="center">这会在正在更新的记录与现有记录之间创建关联，其ID在名为<strong>id_list</strong> 的Python列表中。</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<blockquote>
+<p><strong>重要提示</strong><br>操作类型 <strong>1、2、3和5</strong> 不能与<strong>create()</strong> 方法一起使用。</p>
+</blockquote>
+<h2 id="搜索记录"><a href="#搜索记录" class="headerlink" title="搜索记录"></a>搜索记录</h2><p>搜索记录也是业务逻辑方法中的常见操作。本节向您展示如何按名称和类别查找书籍。</p>
+<h3 id="准备工作-5"><a href="#准备工作-5" class="headerlink" title="准备工作"></a>准备工作</h3><p>本章将使用与上一节相同的<strong>library.book</strong> 定义。我们将新增一个名为<strong>find_book(self)</strong> 的新方法。</p>
+<h3 id="实现步骤-5"><a href="#实现步骤-5" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>要查找书籍，您需要执行以下步骤：</p>
+<ol>
+<li><p>在<strong>library.book</strong> 模型种添加<strong>find_book</strong> 方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">find_book</span>(<span class="params">self</span>):</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为您的条件编写搜索域：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">domain = [</span><br><span class="line">    <span class="string">&#x27;|&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;&amp;&#x27;</span>, (<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;ilike&#x27;</span>, <span class="string">&#x27;Book Name&#x27;</span>),</span><br><span class="line">    (<span class="string">&#x27;category_id.name&#x27;</span>, <span class="string">&#x27;ilike&#x27;</span>, <span class="string">&#x27;Category Name&#x27;</span>),</span><br><span class="line">    <span class="string">&#x27;&amp;&#x27;</span>, (<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;ilike&#x27;</span>, <span class="string">&#x27;Book Name 2&#x27;</span>),</span><br><span class="line">    (<span class="string">&#x27;category_id.name&#x27;</span>, <span class="string">&#x27;ilike&#x27;</span>, <span class="string">&#x27;Category Name 2&#x27;</span>)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用域调用<strong>search()</strong> 方法，这将返回记录集：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">books = self.search(domain</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>书籍变量将有一个搜索书籍的记录集。您可以打印或记录该变量以在服务器日志中查看结果。</p>
+<h3 id="运行原理-5"><a href="#运行原理-5" class="headerlink" title="运行原理"></a>运行原理</h3><p>第1部定义方法。</p>
+<p>第2步局部变量中创建搜索域。通常您会在搜索调用中看到这种创建内联，但对于复杂的域，最好单独定义它。</p>
+<blockquote>
+<p>有关搜索域语法的完整说明，请参阅第九章《后端视图》中的<em>在记录列表上定义域过滤器</em> 。</p>
+</blockquote>
+<p>第3步使用域调用<strong>search()</strong> 方法。该方法返回一个记录集，其中包含与域匹配的所有记录，然后可以进一步处理。在本节中我们只使用域调用方法，但也支持以下关键字参数：</p>
+<ul>
+<li><p><strong>offset&#x3D;N</strong> ：这用于跳过与查询匹配的前<strong>N</strong> 条记录。这可以与<strong>limit</strong> 一起使用来实现分页或在处理大量记录时减少内存消耗。它的默认值为<strong>0</strong> 。</p>
+</li>
+<li><p><strong>limit&#x3D;N</strong> ：表示最多返回<strong>N</strong> 条记录。默认情况下是没有限制。</p>
+</li>
+<li><p><strong>order&#x3D;sort_specification</strong> ：这用于返回的记录集中的排序。 默认情况下，顺序由模型类的<strong>_order</strong> 属性给出。</p>
+</li>
+<li><p><strong>count&#x3D;boolean</strong> ：如果为<strong>True</strong> ，则返回记录数而不是记录集。它默认为<strong>False</strong> 。</p>
+<blockquote>
+<p><strong>重要提示</strong><br>我们建议使用<strong>search_count(domain)</strong> 方法而不是<strong>search(domain, count&#x3D;True)</strong> ，因为该方法的名称以更清晰的方式传达了行为。两者都会给出相同的结果。</p>
+</blockquote>
+</li>
+</ul>
+<p>有时您需要从另一个模型中搜索，以<strong>self</strong> 来搜索将返回当前模型的记录集。要从另一个模型中搜索，我们需要为模型获取一个空记录集。例如，假设我们要搜索一些联系人。为此，我们需要在<strong>res.partner</strong> 模型上使用<strong>search()</strong> 方法。请参考以下代码，这里我们得到<strong>res.partner</strong> 的空记录集来搜索联系人：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">find_partner</span>(<span class="params">self</span>):</span><br><span class="line">    PartnerObj = self.env[<span class="string">&#x27;res.partner&#x27;</span>]</span><br><span class="line">    domain = [</span><br><span class="line">        <span class="string">&#x27;&amp;&#x27;</span>, (<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;ilike&#x27;</span>, <span class="string">&#x27;Parth Gajjar&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;company_id.name&#x27;</span>, <span class="string">&#x27;=&#x27;</span>, <span class="string">&#x27;Odoo&#x27;</span>)</span><br><span class="line">    ]</span><br><span class="line">    partner = PartnerObj.search(domain)</span><br></pre></td></tr></table></figure>
+
+<p>在上面的代码中，你可以在域中省略’<strong>&amp;</strong> ‘，因为当你不指定域时，Odoo会默认使用’<strong>&amp;</strong> ‘。</p>
+<h3 id="扩展内容-3"><a href="#扩展内容-3" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>我们之前说过<strong>search()</strong> 方法返回所有匹配域的记录。这实际上并不完全正确。安全规则确保用户只获得他们具有<strong>读取</strong> 访问权限的那些记录。</p>
+<p>此外，如果模型有一个名为<strong>active</strong> 的布尔字段，并且没有搜索域的术语在该字段上指定条件，则搜索会添加一个隐式条件以仅返回<strong>active&#x3D;True</strong> 的记录。 因此，如果您希望搜索返回某些内容，但只得到空记录集，请确保检查<strong>active</strong> 字段的值（如果存在）以检查记录规则。</p>
+<p>有关不添加隐式<strong>active&#x3D;True</strong> 条件的方法，请参阅第八章《高级服务器端开发》中的<em>使用不同上下文调用方法</em>一节。查看第十章《安全访问》中的<em>使用记录规则限制记录访问</em> 了解有关记录级访问规则的更多信息。</p>
+<p>如果由于某种原因，您需要自己编写原生SQL查询来查找记录ID，请确保使用<strong>self.env[‘record.model’].search([(‘id’, ‘in’, tuple(ids)) ]).ids</strong> 在检索ID之后以确保应用安全规则。这在使用记录规则来区分的多公司的Odoo实例中尤其重要。</p>
+<h2 id="组合记录集"><a href="#组合记录集" class="headerlink" title="组合记录集"></a>组合记录集</h2><p>有时，您会发现您获得的记录集并非您所需要的。本节将展示各种组合它们的方法。</p>
+<h3 id="准备工作-6"><a href="#准备工作-6" class="headerlink" title="准备工作"></a>准备工作</h3><p>在开始学习本节内容之前，你需要有两个或多个相同模型的记录集。</p>
+<h3 id="实现步骤-6"><a href="#实现步骤-6" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>执行以下步骤以对记录集执行常见操作：</p>
+<ol>
+<li><p>要将两个记录集合并为一个，同时保留它们的顺序，请使用以下操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = recordset1 + recordset2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要将两个记录集合并为一个，同时确保结果中没有重复项，请使用以下操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = recordset1 | recordset2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要查找两个记录集共有的记录，请使用以下操作:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = recordset1 &amp; recordset2</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="运行原理-6"><a href="#运行原理-6" class="headerlink" title="运行原理"></a>运行原理</h3><p>记录集的类重载了各种Python的运算符。以下是可用于记录集的最有用的Python运算符的汇总表：</p>
+<table>
+<thead>
+<tr>
+<th>Oprator</th>
+<th align="center">Action performed</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>R1 + R2</td>
+<td align="center">这将返回一个新记录集，其中包含来自R1的记录，然后是来自R2的记录。这会在记录集中生成重复记录。</td>
+</tr>
+<tr>
+<td>R1 - R2</td>
+<td align="center">这将返回一个新记录集，其中包含R1中不在R2中的记录，保留排序。</td>
+</tr>
+<tr>
+<td>R1 &amp; R2</td>
+<td align="center">这将返回一个新记录集，其中包含属于R1和R2的所有记录（记录集的交集）。此处不保留顺序，但没有重复。</td>
+</tr>
+<tr>
+<td>R1</td>
+<td align="center">R2</td>
+</tr>
+<tr>
+<td>R1 &#x3D;&#x3D; R2</td>
+<td align="center">如果两个记录集包含相同的记录，则为<strong>True</strong> 。</td>
+</tr>
+<tr>
+<td>R1 &lt;&#x3D; R2</td>
+<td align="center">如果R1中的所有记录都是R2的子集，则为<strong>True</strong> 。</td>
+</tr>
+<tr>
+<td>R1 &lt; R2</td>
+<td align="center">如果R1中的所有记录都是R2的子集，则为<strong>True</strong> 。</td>
+</tr>
+<tr>
+<td>R1 &gt;&#x3D; R2</td>
+<td align="center">如果R1中的所有记录都是R2的超集，则为<strong>True</strong> 。</td>
+</tr>
+<tr>
+<td>R1 &gt; R2</td>
+<td align="center">如果R1中的所有记录都是R2的超集，则为<strong>True</strong> 。</td>
+</tr>
+<tr>
+<td>R1 !&#x3D; R2</td>
+<td align="center">如果R1和R2不包含相同的记录，则为<strong>True</strong> 。</td>
+</tr>
+<tr>
+<td>R1 in R2</td>
+<td align="center">如果R1（必须是一条记录）是R2的一部分，则为<strong>True</strong> 。</td>
+</tr>
+<tr>
+<td>R1 not in R2</td>
+<td align="center">如果R1（必须是一条记录）不属于R2，则为<strong>True</strong> 。</td>
+</tr>
+</tbody></table>
+<p>还有就地运算符，+&#x3D;、-&#x3D;、&amp;&#x3D; 和 |&#x3D;，它们是修改左侧操作数而不是创建新记录集。这些在更新记录的<strong>One2many</strong> 或<strong>Many2many</strong> 字段时非常有用。有关此示例，请参阅<a href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95%E9%9B%86%E8%AE%B0%E5%BD%95%E7%9A%84%E5%80%BC">更新记录集记录的值</a>。</p>
+<h2 id="过滤记录集"><a href="#过滤记录集" class="headerlink" title="过滤记录集"></a>过滤记录集</h2><p>在某些情况下，您已经有一个记录集，但您只需要对某些记录进行操作。当然，您可以对记录集进行迭代，检查每次迭代的条件并根据检查结果采取行动。构造一个只包含感兴趣的记录并在该记录集上调用单个操作的新记录集可能更容易，并且在某些情况下更有效。</p>
+<p>本节展示了如何使用<strong>filter()</strong> 方法根据条件提取记录集的子集。</p>
+<h3 id="准备工作-7"><a href="#准备工作-7" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将重用<a href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E8%AE%B0%E5%BD%95">创建新记录</a>一节中显示的简化<strong>library.book</strong> 模型。本节定义了一种从提供的记录集中提取具有多个作者的书籍的方法。</p>
+<ol>
+<li><p>定义接受原始记录集的方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.model</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">books_with_multiple_authors</span>(<span class="params">self, all_books</span>):   </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义一个内部谓词函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">predicate</span>(<span class="params">book</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(book.author_ids) &gt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调用<strong>filter()</strong> ，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> all_books.<span class="built_in">filter</span>(predicate)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>您可以打印或记录此方法的结果以在服务器日志中查看它。有关更多信息，请参阅本节的示例代码。</p>
+<h3 id="运行原理-7"><a href="#运行原理-7" class="headerlink" title="运行原理"></a>运行原理</h3><p><strong>filter()</strong> 方法的实现会创建一个空记录集。谓词函数计算结果为<strong>True</strong> 的所有记录都添加到这个空记录集中。最终返回新记录集。原始记录集中的记录顺序被保留。</p>
+<p>前面的例子使用了一个命名的内部函数。对于这样简单的谓词，您经常会发现使用了一个匿名<strong>Lambda</strong> 函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.model</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">books_with_multiple_authors</span>(<span class="params">self, all_books</span>):</span><br><span class="line">    <span class="keyword">return</span> all_books.<span class="built_in">filter</span>(<span class="keyword">lambda</span> b: <span class="built_in">len</span>(b.author_ids) &gt; <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>实际上，您需要根据字段的值在Python意义上为真（非空字符串、非零数字、非空容器等）这一事实来过滤记录集。因此，如果要过滤具有类别集合的记录，可以像这样传递字段名称进行过滤：<strong>all_books.filter(‘category_id’)</strong> 。</p>
+<h3 id="扩展内容-4"><a href="#扩展内容-4" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>请记住<strong>filter()</strong> 是在内存中运行的。如果您需要在关键路径上优化方法的性能，您可能希望使用搜索域甚至迁移到SQL，但以牺牲可读性为代价。</p>
+<h2 id="遍历记录集关联"><a href="#遍历记录集关联" class="headerlink" title="遍历记录集关联"></a>遍历记录集关联</h2><p>使用长度为<strong>1</strong> 的记录集时，各种字段可用作记录属性。关联属性（<strong>One2many</strong> 、<strong>Many2one</strong> 和<strong>Many2many</strong> ) 也可用于记录集的值。例如，假设我们要从<strong>library.book</strong> 模型的记录集中访问类别的名称。您可以通过遍历<strong>Many2one</strong> 字段的<strong>category_id</strong> 来访问类别名称，如下所示：<code>book.category_id.name</code>。但是，当使用具有多个记录的记录集时，不能使用属性。</p>
+<p>本节向你展示了如何使用<strong>mapped()</strong> 方法来遍历记录集关系。我们将编写一个方法来从书籍记录集中检索作者姓名，并作为参数传递。</p>
+<h3 id="准备工作-8"><a href="#准备工作-8" class="headerlink" title="准备工作"></a>准备工作</h3><p>本章重用与<a href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E8%AE%B0%E5%BD%95">创建新记录</a>相同的<strong>library.book</strong> 模型。</p>
+<h3 id="实现步骤-7"><a href="#实现步骤-7" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>要从图书记录集中获取作者姓名，您需要执行以下步骤：</p>
+<ol>
+<li><p>定义一个名为<strong>get_author_name()</strong> 的函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.model</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_author_name</span>(<span class="params">self, books</span>):</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调用<strong>mapped()</strong> 获取partner的联系人邮箱地址：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> books.mapped(<span class="string">&#x27;author_ids.name&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="运行原理-8"><a href="#运行原理-8" class="headerlink" title="运行原理"></a>运行原理</h3><p>第1步只是定义方法。第2步我们调用<strong>mapped(path)</strong> 方法遍历记录集的字段；<strong>path</strong> 是一个字符串，其中包含用点分隔的字段名称。对于路径中的每个字段，<strong>mapped()</strong> 生成一个新记录集，其中包含与该字段相关的所有记录与当前记录集中的所有元素，然后路径中的下一个元素应用于该新记录集。如果路径中的最后一个字段是关联字段，则<strong>mapped()</strong> 将返回一个记录集；否则，返回的是Python列表。</p>
+<p><strong>mapped()</strong> 方法有两个有用的属性：</p>
+<ul>
+<li><p>如果路径是单个标量字段名称，则返回的列表与处理的记录集的顺序相同。</p>
+</li>
+<li><p>如果路径包含关联字段，则不会保留顺序，但会从结果中删除重复项。</p>
+<blockquote>
+<p><strong>重要信息</strong><br>当您想对<strong>self</strong> 中的所有记录的<strong>Many2many</strong> 字段指向的所有记录执行操作时，第二个属性非常有用，但是您需要确保该操作只执行一次（即使<strong>self</strong> 中的两个记录共享同一个目标记录）。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="扩展内容-5"><a href="#扩展内容-5" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>使用<strong>mapped()</strong> 时，请记住它在Odoo服务器内部的内存中运行的，通过重复遍历关联并因此进行SQL查询，这效率可能不高。但是，这种代码更简洁且可读性高。如果您尝试在实例性能的关键路径上优化方法，您可能需要重写对<strong>mapped()</strong> 的调用并以适当的域以<strong>search()</strong> 进行表现，或者甚至转移到SQL（代码可读性成本增加）。</p>
+<p><strong>mapped()</strong> 方法也可以通过函数作为参数来调用。在这种情况下，它返回一个列表，包含应用于<strong>self</strong> 每条记录的函数的结果列表，或者返回在函数返回的是记录集的情况下由该函数返回的记录集的并集。</p>
+<blockquote>
+<p><strong>也可以看看</strong></p>
+<ul>
+<li><a href="#%E6%90%9C%E7%B4%A2%E8%AE%B0%E5%BD%95">搜索记录</a>章节。</li>
+<li>第八章《高级服务器端开发》中的执行原生SQL查询章节。</li>
+</ul>
+</blockquote>
+<h2 id="排序记录集"><a href="#排序记录集" class="headerlink" title="排序记录集"></a>排序记录集</h2><p>当您使用<strong>search()</strong> 方法获取记录集时，您可以传递一个可选参数<strong>order</strong> 来获取特定排序的记录集。如果您已经拥有来自前一段代码的记录集并且想要对其进行排序，这将非常有用。如果您使用集合操作来组合两个记录集，它也可能很有用，例如，这会导致排序丢失。</p>
+<p>本节向你展示了如何使用<strong>sorted()</strong> 方法对现有记录集进行排序。我们将按发行日期对书籍进行排序。</p>
+<h3 id="准备工作-9"><a href="#准备工作-9" class="headerlink" title="准备工作"></a>准备工作</h3><p>本章重用与<a href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E8%AE%B0%E5%BD%95">创建新记录</a>相同的<strong>library.book</strong> 模型。</p>
+<h3 id="实现步骤-8"><a href="#实现步骤-8" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>您需要执行以下步骤来获取基于<strong>release_date</strong> 排序的图书记录集：</p>
+<ol>
+<li><p>定义名为<strong>sort_books_by_date()</strong> ：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.model</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sort_books_by_date</span>(<span class="params">self, books</span>):</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如给定示例所示，使用<strong>sorted()</strong> 方法根据<strong>release_date</strong> 字段对图书记录进行排序：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> books.<span class="built_in">sorted</span>(key=<span class="string">&#x27;release_date&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="运行原理-9"><a href="#运行原理-9" class="headerlink" title="运行原理"></a>运行原理</h3><p>第1步只是定义方法。在步骤2中，我们调用书籍记录集中的<strong>sorted()</strong> 方法。在内部，<strong>sorted()</strong> 方法将获取作为键参数传递的字段的数据。然后，通过使用Python的原生排序方法，返回一个排序的记录集。</p>
+<p>它还有一个可选参数<strong>reverse&#x3D;True</strong> ，它以相反的顺序返回一个记录集。反向使用如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">books.<span class="built_in">sorted</span>(key=<span class="string">&#x27;release_date&#x27;</span>, reverse=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="扩展内容-6"><a href="#扩展内容-6" class="headerlink" title="扩展内容"></a>扩展内容</h3><p><strong>sorted()</strong> 方法将对记录集中的记录进行排序。不带参数调用，默认使用模型的<strong>_order</strong> 属性来排序。也可以传递一个函数以与Python内置的<strong>sorted(sequence, key)</strong> 函数相同的方式计算比较。</p>
+<blockquote>
+<p><strong>重要笔记</strong><br>当使用模型默认的<strong>_order</strong>参数时，排序会在数据库中进行，执行新的SELECT函数获取排序。否则排序由Odoo执行。根据所操作的内容以及记录集的大小，可能存在一些重要的性能差异。</p>
+</blockquote>
+<h2 id="扩展模型中定义的业务逻辑"><a href="#扩展模型中定义的业务逻辑" class="headerlink" title="扩展模型中定义的业务逻辑"></a>扩展模型中定义的业务逻辑</h2><p>在Odoo中，将应用程序功能划分为不同的模块是一种非常常见的做法。通过这样做，您可以通过安装&#x2F;卸载应用程序来简单地启用&#x2F;禁用功能。而且，当您向现有应用程序添加新功能时，就需要自定义在原始应用程序中定义的某些方法的行为。有时，您还想向现有模型添加新字段。这在Odoo中是一项非常简单的任务，也是底层框架最强大的功能之一。</p>
+<p>在本节中，我们将看到如何从另一个模块中的方法扩展一个方法的业务逻辑。我们还将从新模块向现有模块添加新字段。</p>
+<h3 id="准备工作-10"><a href="#准备工作-10" class="headerlink" title="准备工作"></a>准备工作</h3><p>对于本节我们将继续使用上一节中的<strong>my_library</strong> 模块。确保在<strong>my_library</strong> 模块中有<strong>library.book.category</strong> 模型。</p>
+<p>对于本节我们将创建一个名为<strong>my_library_return</strong> 的新模块，它依赖于<strong>my_library</strong> 模块。在新模块中，我们将管理借书的归还日期。我们还将根据类别自动计算归还日期。</p>
+<p>在第四章《应用模型》中的<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/#%E4%BD%BF%E7%94%A8%E7%BB%A7%E6%89%BF%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E5%8A%9F%E8%83%BD">使用继承向模型添加功能</a>小节中，我们看到了如何向现有模型添加字段。在这个模块中，需要扩展<strong>library.book</strong> 模型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    _inherit = <span class="string">&#x27;library.book&#x27;</span></span><br><span class="line">    date_return = fields.Date(<span class="string">&#x27;Date to return&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后扩展<strong>library.book.category</strong> 模型，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBookCategory</span>(models.Model):</span><br><span class="line">    _inherit = <span class="string">&#x27;library.book.category&#x27;</span></span><br><span class="line">    max_borrow_days = fields.Integer(</span><br><span class="line">        <span class="string">&#x27;Maximum borrow days&#x27;</span>,</span><br><span class="line">        <span class="built_in">help</span>=<span class="string">&quot;For how many days book can be borrowed&quot;</span>,</span><br><span class="line">        default=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>要在视图中添加此字段，您需要遵循第九章《后端视图》中的<em>更改现有视图-视图继承</em> 章节。您可以在<a target="_blank" rel="noopener" href="https://github.com/PacktPublishing/Odoo-13-Development-Cookbook-Fourth-Edition">https://github.com/PacktPublishing/Odoo-13-Development-Cookbook-Fourth-Edition</a>找到完整的代码示例。</p>
+<h3 id="实现步骤-9"><a href="#实现步骤-9" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>要扩展<strong>library.book</strong> 模型中的业务逻辑，您需要执行以下步骤：</p>
+<ol>
+<li><p>在<strong>my_library_return</strong> 中，当我们将图书状态更改为已借阅时，我们希望在图书记录中设置<strong>date_return</strong> 。 为此，我们将重写<strong>my_module_return</strong> 模块中的<strong>make_borrowed</strong> 方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">make_borrowed</span>(<span class="params">self</span>):</span><br><span class="line">    day_to_borrow = self.category_id.max_borrow_days <span class="keyword">or</span> <span class="number">10</span></span><br><span class="line">    self.date_return = fields.Date.today() + timedelta(days=day_to_borrow)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>(LibraryBook, self).make_borrowed()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>我们还想在图书归还时重置<strong>date_return</strong> ，因此我们将重写<strong>make_available</strong> 方法来重置日期：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">make_available</span>(<span class="params">self</span>):</span><br><span class="line">    self.date_return = <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>(LibraryBook, self).make_available()</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="运行原理-10"><a href="#运行原理-10" class="headerlink" title="运行原理"></a>运行原理</h3><p>步骤1和2对业务逻辑进行了扩展。我们定义了一个扩展的<strong>library.books</strong> 模型，并重新定义了<strong>make_borrowed()</strong> 和<strong>make_available()</strong> 方法。在这两个方法的最后一行，返回的是父类实现的结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="built_in">super</span>(LibraryBook, self).make_borrowed()</span><br></pre></td></tr></table></figure>
+
+<p>对于Odoo模型，通过查看Python类定义，父类并不是您所期望的。框架为我们的记录集动态生成了一个类层次结构，父类是我们依赖的模块中模型的定义。因此使用<strong>super()</strong> 方法从<strong>my_module</strong> 中调用<strong>library.book</strong> 中的实现。 本例中的<strong>make_borrowed()</strong> 需要将图书的状态更改为已借阅。 因此使用<strong>super()</strong> 调用父类中的方法并将图书状态设置为已借阅。</p>
+<h3 id="扩展内容-7"><a href="#扩展内容-7" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>在本节中我们选择扩展默认的实现方法。在<strong>make_borrow()</strong> 和<strong>make_available()</strong> 方法中，我们在<strong>super()</strong> 调用之前修改了返回的结果。请注意，当您调用<strong>super()</strong> 时，它将执行父类中的逻辑。也可以在<strong>super()</strong> 调用之后执行一些操作。当然，我们也可以同时做这两件事。</p>
+<p>但是，更改方法中间的行为更加困难。为此我们需要重构代码，以便我们可以将扩展点提取到单独的方法中，并在扩展模块中重写这个新方法。</p>
+<p>您可能很想完全重写一个方法。这样做时要非常小心。如果您不调用方法的 super() 实现，您将破坏扩展机制并可能破坏扩展方法的附加组件，这意味着永远不会调用扩展方法。除非您在受控环境中工作，您确切知道安装了哪些附加组件，并且您已经检查过您没有破坏它们，请避免这样做。此外如果必须确保以非常明显的方式记录您正在做的事情。</p>
+<p>在调用方法的原始实现之前和之后可以做什么？有很多东西包括（但不限于）以下内容：</p>
+<ul>
+<li>修改传递给原始实现的参数（之前）</li>
+<li>修改传递给原始实现的上下文（之前）</li>
+<li>修改原始实现返回的结果（之后）</li>
+<li>调用另一个方法（之前和之后）</li>
+<li>创建记录（之前和之后）</li>
+<li>在禁止的情况下（之前和之后）抛出<strong>UserError</strong> 错误以取消执行</li>
+<li>将<strong>self</strong> 拆分为更小的记录集，并以不同的方式（之前）在每个子集上调用原始实现</li>
+</ul>
+<h2 id="扩展write-和create"><a href="#扩展write-和create" class="headerlink" title="扩展write()和create()"></a>扩展write()和create()</h2><p>本章的<a href="#%E6%89%A9%E5%B1%95%E6%A8%A1%E5%9E%8B%E4%B8%AD%E5%AE%9A%E4%B9%89%E7%9A%84%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91">扩展模型中定义的业务逻辑</a>一节向我们展示了如何扩展定义在模型类上的方法。您应该知道，在父类模型上定义的方法也是模型的一部分。这意味着<strong>models.Model</strong> 上定义的所有基础方法（实际上是<strong>models.BaseModel</strong> ，它是<strong>models.Model</strong> 的父类）也是可用的并且可以扩展。</p>
+<p>本节向你展示了如何扩展<strong>create()</strong> 和<strong>write()</strong> 来控制对记录的某些字段的访问。</p>
+<h3 id="准备工作-11"><a href="#准备工作-11" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将使用<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第三章《创建Odoo附加模块》</a>中的<strong>my_library</strong> 模块来扩展。</p>
+<p>将<strong>manager_remarks</strong> 字段添加到<strong>library.book</strong> 模型。我们只希望<strong>Library Managers</strong> 组的成员能够写入该字段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> models, api, exceptions</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.book&#x27;</span></span><br><span class="line">    manager_remarks = fields.Text(<span class="string">&#x27;Manager Remarks&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>将<strong>manager_remarks</strong> 字段添加到<strong>view&#x2F;library_book.xml</strong> 文件的<strong>&lt;form&gt;</strong> 视图，以便从用户界面访问此字段：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;manager_remarks&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>修改<strong>security&#x2F;ir.model.access.csv</strong> 文件，为Library用户提供写入权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink</span><br><span class="line">acl_book_user,library.book_default,model_library_book,base.group_user,1,1,0,0</span><br><span class="line">acl_book_librarian,library.book_librarian,model_library_book,group_librarian,1,1,1,1</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="实现步骤-10"><a href="#实现步骤-10" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>为了防止非librarian组成员的用户修改<strong>manager_remarks</strong> 的值，您需要执行以下步骤：</p>
+<ol>
+<li><p>扩展<strong>create()</strong> 方法，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.model</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create</span>(<span class="params">self, values</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.user_has_groups(<span class="string">&#x27;my_library.group_librarian&#x27;</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;manager_remarks&#x27;</span> <span class="keyword">in</span> values:</span><br><span class="line">            <span class="keyword">raise</span> UserError(</span><br><span class="line">                <span class="string">&#x27;You are not allowed to modify &#x27;</span></span><br><span class="line">                <span class="string">&#x27;manager_remarks&#x27;</span></span><br><span class="line">            )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>(LibraryBook, self).create(values)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扩展<strong>write()</strong> 方法，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, values</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.user_has_groups(<span class="string">&#x27;my_library.group_librarian&#x27;</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;manager_remarks&#x27;</span> <span class="keyword">in</span> values:</span><br><span class="line">            <span class="keyword">raise</span> UserError(</span><br><span class="line">                <span class="string">&#x27;You are not allowed to modify &#x27;</span></span><br><span class="line">                <span class="string">&#x27;manager_remarks&#x27;</span></span><br><span class="line">            )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>(LibraryBook, self).write(values)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>安装模块以查看运行中的代码。现在只有manager类型的用户可以修改<strong>manager_remarks</strong> 字段。要测试此实现，您可以以demo用户登录或撤销当前用户的图书管理员访问权限。</p>
+<h3 id="运行原理-11"><a href="#运行原理-11" class="headerlink" title="运行原理"></a>运行原理</h3><p>第1步重新定义<strong>create()</strong> 方法。在调用<strong>create()</strong> 的基础实现之前，我们的方法使用<strong>user_has_groups()</strong> 方法检查用户是否属于<strong>my_library.group_librarian</strong> 组（这是组的XML ID）。如果用户不属于<strong>my_library.group_librarian</strong> 组并且为<strong>manager_remarks</strong> 传递了一个值，则会抛出<strong>UserError</strong> 异常，从而阻止创建记录。此检查应放在调用父类实现之前执行。</p>
+<p>第2步对<strong>write()</strong> 方法执行相同的操作。在写入之前，我们检查组和值中是否存在要写入的字段，如果有问题则抛出<strong>UserError</strong> 异常</p>
+<blockquote>
+<p><strong>重要笔记</strong><br>当在Web客户端中将该字段设置为只读时不会阻止RPC调用写入它。这就是我们扩展<strong>create()</strong> 和<strong>write()</strong> 的原因。</p>
+</blockquote>
+<p>在本节中，你已经看到了如何重写<strong>create()</strong> 和<strong>write()</strong> 方法。 但请注意，这不仅限于<strong>create()</strong> 和<strong>write()</strong> 方法。您可以重写任何模型方法。例如假设您想在删除记录时执行某些操作。为此您需要重写<strong>unlink()</strong> 方法（删除记录时会调用<strong>unlink()</strong> 方法）。下面是重写<strong>unlink()</strong> 方法的小代码片段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">unlink</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="comment"># 这里写你的业务逻辑</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>(LibraryBook, self).unlink()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>警告</strong><br>在Odoo中重写方法时，千万不要忘记调用<strong>super()</strong> 方法，否则会遇到问题。这是因为当你不使用<strong>super()</strong> 方法时，父类方法中的代码永远不会执行。如果在我们之前的代码片段中，我们没有调用**super(…).unlink()**，则记录不会被删除。</p>
+</blockquote>
+<h3 id="扩展内容-8"><a href="#扩展内容-8" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>在扩展<strong>write()</strong> 时，请注意在调用<strong>write()</strong> 的<strong>super()</strong> 实现之前，<strong>self</strong>仍然是未修改的。您可以使用它来将字段的当前值与值字典中的值进行比较。</p>
+<p>在本节中，我们选择了抛出异常，但我们也可以选择从值字典中删除有问题的字段，并默默地跳过更新记录中的该字段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, values</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.user_has_groups( <span class="string">&#x27;my_library.group_librarian&#x27;</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;manager_remarks&#x27;</span> <span class="keyword">in</span> values:</span><br><span class="line">            <span class="keyword">del</span> values[<span class="string">&#x27;manager_remarks&#x27;</span>]</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>(LibraryBook, self).write(values)</span><br></pre></td></tr></table></figure>
+
+<p>在调用<strong>super().write()</strong> 之后，如果你想执行额外的操作，你必须警惕任何可能导致再次调用<strong>write()</strong> 的事情，否则你将创建一个无限递归的循环。解决方法是在上下文中放置一个标记，以便检查以中断递归：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyModel</span>(models.Model):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, values</span>):</span><br><span class="line">        sup = <span class="built_in">super</span>(MyModel, self).write(values)</span><br><span class="line">        <span class="keyword">if</span> self.env.context.get(<span class="string">&#x27;MyModelLoopBreaker&#x27;</span>):</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        self = self.with_context(MyModelLoopBreaker=<span class="literal">True</span>)</span><br><span class="line">        self.compute_things() <span class="comment"># can cause calls to writes</span></span><br><span class="line">        <span class="keyword">return</span> sup</span><br></pre></td></tr></table></figure>
+
+<p>在前面的示例中，我们在<strong>compute_things()</strong> 方法之前添加了<strong>MyModelLoopBreaker</strong> 键。因此，如果再次调用<strong>write()</strong> 方法，它不会进入无限循环。</p>
+<h2 id="自定义搜索记录的方式"><a href="#自定义搜索记录的方式" class="headerlink" title="自定义搜索记录的方式"></a>自定义搜索记录的方式</h2><p>在<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/#%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%8E%B0%E5%8F%8A%E6%8E%92%E5%BA%8F">第四章《应用模型》</a>中的<em>定义模型表现及排序</em> ，介绍了<strong>name_get()</strong> 方法，该方法用于计算不同位置的记录表示，包括用于显示<strong>Many2one</strong> 关联的小部件。</p>
+<p>本节向您展示如何通过重新定义<strong>name_search</strong> 在<strong>Many2one</strong> 小部件中按标题、作者或ISBN搜索一本书。</p>
+<h3 id="准备工作-12"><a href="#准备工作-12" class="headerlink" title="准备工作"></a>准备工作</h3><p>对于本节，我们将使用以下模型定义：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.book&#x27;</span></span><br><span class="line">    name = fields.Char(<span class="string">&#x27;Title&#x27;</span>)</span><br><span class="line">    isbn = fields.Char(<span class="string">&#x27;ISBN&#x27;</span>)</span><br><span class="line">    author_ids = fields.Many2many(<span class="string">&#x27;res.partner&#x27;</span>, <span class="string">&#x27;Authors&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">name_get</span>(<span class="params">self</span>):</span><br><span class="line">        result = []</span><br><span class="line">        <span class="keyword">for</span> book <span class="keyword">in</span> self:</span><br><span class="line">            authors = book.author_ids.mapped(<span class="string">&#x27;name&#x27;</span>)</span><br><span class="line">            name = <span class="string">&#x27;%s (%s)&#x27;</span> % (book.name, <span class="string">&#x27;, &#x27;</span>.join(authors))</span><br><span class="line">            result.append((book.<span class="built_in">id</span>, name))</span><br><span class="line">        <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+
+<p>使用此模型时，<strong>Many2one</strong> 小部件中的一本书显示为<strong>书名(作者1, 作者2…)</strong> 。 用户希望能够输入作者的姓名并找到根据此姓名过滤的列表，但这不会起作用，因为<strong>name_search</strong> 的默认实现仅使用模型类的<strong>_rec_name</strong> 属性所引用的属性，在我们的例子是<strong>&#39;name&#39;</strong> 。我们还希望允许按ISBN编号进行过滤。</p>
+<h3 id="实现步骤-11"><a href="#实现步骤-11" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>您需要执行以下步骤：</p>
+<ol>
+<li><p>为了能够通过书名、作者或ISBN号搜索<strong>library.book</strong> ，您需要在<strong>LibraryBook</strong> 类中定义<strong>name_search()</strong> 方法，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.model</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_name_search</span>(<span class="params">self, name=<span class="string">&#x27;&#x27;</span>, args=<span class="literal">None</span>, operator=<span class="string">&#x27;ilike&#x27;</span>, imit=<span class="number">100</span>, name_get_uid=<span class="literal">None</span></span>):</span><br><span class="line">    args = [] <span class="keyword">if</span> args <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> args.copy()</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span>(name == <span class="string">&#x27;&#x27;</span> <span class="keyword">and</span> operator == <span class="string">&#x27;ilike&#x27;</span>):</span><br><span class="line">        args += [<span class="string">&#x27;|&#x27;</span>, <span class="string">&#x27;|&#x27;</span>,</span><br><span class="line">            (<span class="string">&#x27;name&#x27;</span>, operator, name),</span><br><span class="line">            (<span class="string">&#x27;isbn&#x27;</span>, operator, name),</span><br><span class="line">            (<span class="string">&#x27;author_ids.name&#x27;</span>, operator, name)</span><br><span class="line">        ]</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">super</span>(LibraryBook, self)._name_search(name=name, args=args, operator=operator, limit=limit, name_get_uid=name_get_uid)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<strong>library.book</strong> 模型中添加名为<strong>old_editions</strong> 的<strong>Many2one</strong> 字段以测试<strong>_name_search</strong> 实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">old_edition = fields.Many2one(<span class="string">&#x27;library.book&#x27;</span>, string=<span class="string">&#x27;Old Edition&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将以下字段添加到用户界面：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;old_edition&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重新启动并更新模块以反映这些更改。</p>
+</li>
+</ol>
+<p>您可以通过在<strong>old_edition Many2one</strong> 字段中来调用<strong>_name_search</strong> 方法搜索。</p>
+<h3 id="运行原理-12"><a href="#运行原理-12" class="headerlink" title="运行原理"></a>运行原理</h3><p><strong>name_search()</strong> 的默认实现实际上只调用<strong>_name_search()</strong> 方法，它完成了真正的工作。这个<strong>_name_search()</strong> 方法有一个额外的参数<strong>name_get_uid</strong>，它在一些极端情况下使用，例如如果你想使用<strong>sudo()</strong> 或不同的用户来计算结果。</p>
+<p>我们将收到的大部分参数原封不动地传递给方法的<strong>super()</strong> 实现：</p>
+<ul>
+<li><strong>name</strong> 是一个字符串，其中包含用户输入的值。</li>
+<li><strong>args</strong> 是<strong>None</strong> 或用作可能记录的预过滤器的搜索域。（例如它可以来自<strong>Many2one</strong> 关联的域参数。）</li>
+<li><strong>operator</strong> 是包含匹配运算符的字符串。一般来说，你会有<strong>&#39;ilike&#39;</strong> 或<strong>&#39;&#x3D;&#39;</strong>。</li>
+<li><strong>limit</strong> 是要检索的最大行数。</li>
+<li><strong>name_get_uid</strong> 可用于在调用<strong>name_get()</strong> 以计算要在小部件中显示的字符串时指定不同的用户。</li>
+</ul>
+<p>我们对该方法的实现执行以下操作：</p>
+<ol>
+<li><p>如果<strong>args</strong> 为<strong>None</strong>，它会生成一个新的空列表，否则会生成<strong>args</strong> 的副本。我们制作一个副本以避免我们对列表的修改对调用者产生副作用。</p>
+</li>
+<li><p>然后，我们检查<strong>name</strong> 不是空字符串或者操作符不是<strong>&#39;ilike&#39;</strong> 。这是为了避免生成一个不过滤任何内容的哑域<strong>[(&#39;name&#39;, ilike, &#39;&#39;)]</strong> 。在这种情况下，我们直接跳转到<strong>super()</strong> 调用实现。</p>
+</li>
+<li><p>如果我们有<strong>name</strong> ，或者如果<strong>operator</strong> 不是<strong>&#39;ilike&#39;</strong> ，那么我们会在<strong>args</strong> 中添加一些过滤条件。在我们的例子中，我们添加了对所提供名称在图书标题、ISNB 或作者姓名中搜索的语句。</p>
+</li>
+<li><p>最后，我们使用<strong>args</strong> 中修改的域调用<strong>super()</strong> 实现，并强制<strong>name</strong> 为<strong>&#39;&#39;</strong> 和<strong>operator</strong> 为 <strong>ilike</strong> 。我们这样做是为了强制<strong>_name_search()</strong> 的默认实现不改变它接收的域，因此将使用我们指定的域。</p>
+</li>
+</ol>
+<h3 id="扩展内容-9"><a href="#扩展内容-9" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>我们在介绍中提到，这个方法用在<strong>Many2one</strong> 小部件中。为了完整起见，它也用于<strong>Odoo</strong> 的以下部分：</p>
+<ul>
+<li>在域中的<strong>One2many</strong> 和<strong>Many2many</strong> 字段上使用<strong>in</strong> 运算符时</li>
+<li>在<strong>many2many_tags</strong> 小部件中搜索记录</li>
+<li>在CSV文件中搜索记录导入</li>
+</ul>
+<blockquote>
+<p><strong>也可以看看</strong><br><a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/#%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%8E%B0%E5%8F%8A%E6%8E%92%E5%BA%8F">第四章《应用模型》</a>中的<em>定义模型表现及排序</em> 介绍了如何定义<strong>name_get()</strong> 方法，该方法用于创建记录的文本表示。<br>第九章《后端视图》中的<em>在记录列表上定义过滤器-域</em> 提供了有关搜索域语法的更多信息。</p>
+</blockquote>
+<h2 id="使用read-group-分组获取数据"><a href="#使用read-group-分组获取数据" class="headerlink" title="使用read_group()分组获取数据"></a>使用read_group()分组获取数据</h2><p>在之前章节中，我们看到了如何从数据库中搜索和获取数据。但有时，您希望通过汇总记录获得结果，例如上个月销售订单的平均成本。通常我们在SQL查询中使用<strong>group by</strong> 和<strong>aggregate</strong> 函数来获得这样的结果。幸运的是在Odoo中，我们有<strong>read_group()</strong> 方法。在本节中，你将学习如何使用<strong>read_group()</strong> 方法来获取聚合结果。</p>
+<h3 id="准备工作-13"><a href="#准备工作-13" class="headerlink" title="准备工作"></a>准备工作</h3><p>本节我们将使用<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第三章《创建Odoo附加模块》</a>中的<strong>my_library</strong> 模块。</p>
+<p>修改<strong>library.book</strong> 模型，如下模型定义所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.book&#x27;</span></span><br><span class="line">    name = fields.Char(<span class="string">&#x27;Title&#x27;</span>, required=<span class="literal">True</span>)</span><br><span class="line">    date_release = fields.Date(<span class="string">&#x27;Release Date&#x27;</span>)</span><br><span class="line">    pages = fields.Integer(<span class="string">&#x27;Number of Pages&#x27;</span>)</span><br><span class="line">    cost_price = fields.Float(<span class="string">&#x27;Book Cost&#x27;</span>)</span><br><span class="line">    category_id = fields.Many2one(<span class="string">&#x27;library.book.category&#x27;</span>)</span><br><span class="line">    author_ids = fields.Many2many(<span class="string">&#x27;res.partner&#x27;</span>, string=<span class="string">&#x27;Authors&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>添加<strong>library.book.category</strong> 模型。为简单起见，我们只需将其添加到同一个<strong>library_book.py</strong> 文件中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BookCategory</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.book.category&#x27;</span></span><br><span class="line">    name = fields.Char(<span class="string">&#x27;Category&#x27;</span>)</span><br><span class="line">    description = fields.Text(<span class="string">&#x27;Description&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>我们将使用<strong>library.book</strong> 模型并获得每个类别的平均成本价格。</p>
+<h3 id="实现步骤-12"><a href="#实现步骤-12" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>为了提取分组结果，我们将<strong>_get_average_cost</strong> 方法添加到<strong>library.book</strong> 模型中，该模型将使用<strong>read_group()</strong> 方法获取组中的数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.model</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_get_average_cost</span>(<span class="params">self</span>):</span><br><span class="line">    grouped_result = self.read_group(</span><br><span class="line">        [(<span class="string">&#x27;cost_price&#x27;</span>, <span class="string">&quot;!=&quot;</span>, <span class="literal">False</span>)], <span class="comment"># Domain</span></span><br><span class="line">        [<span class="string">&#x27;category_id&#x27;</span>, <span class="string">&#x27;cost_price:avg&#x27;</span>], <span class="comment"># Fields to access</span></span><br><span class="line">        [<span class="string">&#x27;category_id&#x27;</span>] <span class="comment"># group_by</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> grouped_result</span><br></pre></td></tr></table></figure>
+
+<p>要测试此实现，您需要在用户界面中添加一个按钮来触发此方法。然后，您可以在服务器日志中打印结果。</p>
+<h3 id="运行原理-13"><a href="#运行原理-13" class="headerlink" title="运行原理"></a>运行原理</h3><p><strong>read_group()</strong> 方法在内部使用SQL <strong>group by</strong> 和 <strong>aggregate</strong> 函数来获取数据。传递给<strong>read_group()</strong> 方法的最常见参数如下：</p>
+<ul>
+<li><p><strong>domain</strong> :这用于过滤记录以进行分组。有关域的更多信息请参阅第九章《后端视图》中的<em>搜索视图</em> 章节。</p>
+</li>
+<li><p><strong>fields</strong> :这将传递您要与分组数据一起获取的字段的名称。此参数的可能值如下：</p>
+<ul>
+<li><strong>field name</strong> ：可以将字段名称传递给<strong>fields</strong> 参数，但如果使用此选项，则必须将此字段名称也传递给<strong>groupby</strong> 参数，否则会产生错误。</li>
+<li><strong>field_name:agg</strong>：可以通过<strong>aggregate</strong> 函数传递字段名称。例如，在<strong>cost_price:avg</strong> 中，<strong>avg</strong> 是一个SQL聚合函数。可以在<a target="_blank" rel="noopener" href="https://www.postgresql.org/docs/current/static/functions-aggregate.html">https://www.postgresql.org/docs/current/static/functions-aggregate.html</a> 找到PostgreSQL聚合函数的列表。</li>
+<li><strong>name:agg(field_name)<strong>：这与前一个相同，但使用此语法，您可以提供列别名，例如</strong>average_price:avg(cost_price)</strong> 。</li>
+</ul>
+</li>
+<li><p><strong>groupby</strong> :此参数接受字段描述列表。记录将根据这些字段进行分组。对于日期和时间列，您可以<br>通过<strong>groupby_function</strong> 根据不同的持续时间应用日期分组，例如<strong>date_release:month</strong> 。这将应用基于月份的分组。</p>
+</li>
+<li><p><strong>read_group()</strong> 还支持一些可选参数，如下：</p>
+<ul>
+<li><strong>offset</strong> ：这表示要跳过的记录数。</li>
+<li><strong>limit</strong> ：这表示要返回的最大记录数。</li>
+<li><strong>orderby</strong> ：如果使用了这个选项，结果将根据给定的字段进行排序。</li>
+<li><strong>lazy</strong> ：这接收布尔值，默认情况下为<strong>True</strong> 。如果为<strong>True</strong> ，则结果仅按第一个<strong>groupby</strong> 分组，其余<strong>groupby</strong> 放在<strong>__context</strong> 键中。如果为<strong>False</strong> ，则所有<strong>groupby</strong> 函数都在一次调用中完成。</li>
+</ul>
+<blockquote>
+<p><strong>性能提示</strong><br><strong>read_group()</strong> 比从记录集中读取和处理值要快得多。 因此，对于KPI或图表，您应该始终使用<strong>read_group()</strong> 。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="扩展内容-10"><a href="#扩展内容-10" class="headerlink" title="扩展内容"></a>扩展内容</h3></div><div class="article-licensing box"><div class="licensing-title"><p>Odoo14开发者指南第五章-基本服务端开发【翻译】</p><p><a href="https://www.junle.org/Odoo14开发者指南第五章-基本服务端开发【翻译】/">https://www.junle.org/Odoo14开发者指南第五章-基本服务端开发【翻译】/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Junle</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2022-06-14</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2024-03-22</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Odoo%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97/">Odoo开发者指南</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/static/donate_wechat.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%85%AD%E7%AB%A0-%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9D%97%E6%95%B0%E6%8D%AE%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Odoo14开发者指南第六章-管理模块数据【翻译】</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><span class="level-item">Odoo14开发者指南第四章-应用模型【翻译】</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/';
+            this.page.identifier = 'Odoo14开发者指南第五章-基本服务端开发【翻译】/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'junles-blog' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/static/avatar.jpg" alt="Junle"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Junle</p><p class="is-size-6 is-block">elnujuw</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Guangdong (CN)</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">58</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">24</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/elnujuw" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/elnujuw"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="/static/email.png"><i class="fas fa-at"></i></a></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-03-22T07:56:01.000Z">2024-03-22</time></p><p class="title"><a href="/RuoYi%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E4%B8%8ESQLServer%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E7%BE%8E%E6%90%AD%E9%85%8D/">RuoYi系统如何与SQLServer数据库完美搭配</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-07-24T05:34:39.000Z">2023-07-24</time></p><p class="title"><a href="/%E6%8E%92%E6%9F%A5SQL-Server%E4%B8%AD%E8%BF%90%E8%A1%8C%E7%BC%93%E6%85%A2%E7%9A%84%E6%9F%A5%E8%AF%A2%E9%97%AE%E9%A2%98/">排查SQL Server中运行缓慢的查询问题</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-12-01T01:35:51.000Z">2022-12-01</time></p><p class="title"><a href="/Print-Spooler-%E6%9C%8D%E5%8A%A1%E6%84%8F%E5%A4%96%E7%BB%88%E6%AD%A2/">Print Spooler 服务意外终止</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-06-16T02:01:36.000Z">2022-06-16</time></p><p class="title"><a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%85%AD%E7%AB%A0-%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9D%97%E6%95%B0%E6%8D%AE%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">Odoo14开发者指南第六章-管理模块数据【翻译】</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-06-14T01:14:57.000Z">2022-06-14</time></p><p class="title"><a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">Odoo14开发者指南第五章-基本服务端开发【翻译】</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2024/03/"><span class="level-start"><span class="level-item">三月 2024</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2023/07/"><span class="level-start"><span class="level-item">七月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/12/"><span class="level-start"><span class="level-item">十二月 2022</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/05/"><span class="level-start"><span class="level-item">五月 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">三月 2022</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/12/"><span class="level-start"><span class="level-item">十二月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/08/"><span class="level-start"><span class="level-item">八月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/04/"><span class="level-start"><span class="level-item">四月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/03/"><span class="level-start"><span class="level-item">三月 2021</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/10/"><span class="level-start"><span class="level-item">十月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/08/"><span class="level-start"><span class="level-item">八月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/06/"><span class="level-start"><span class="level-item">六月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/05/"><span class="level-start"><span class="level-item">五月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/04/"><span class="level-start"><span class="level-item">四月 2020</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">八月 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">七月 2019</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/01/"><span class="level-start"><span class="level-item">一月 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2017/06/"><span class="level-start"><span class="level-item">六月 2017</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/11/"><span class="level-start"><span class="level-item">十一月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/07/"><span class="level-start"><span class="level-item">七月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/03/"><span class="level-start"><span class="level-item">三月 2016</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/01/"><span class="level-start"><span class="level-item">一月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2015/07/"><span class="level-start"><span class="level-item">七月 2015</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/11/"><span class="level-start"><span class="level-item">十一月 2014</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/08/"><span class="level-start"><span class="level-item">八月 2014</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/06/"><span class="level-start"><span class="level-item">六月 2014</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Arduino/"><span class="tag">Arduino</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Chart-js/"><span class="tag">Chart.js</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ERP5/"><span class="tag">ERP5</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ESP8266/"><span class="tag">ESP8266</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Java/"><span class="tag">Java</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Linux/"><span class="tag">Linux</span><span class="tag">10</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Metabase/"><span class="tag">Metabase</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/MySQL/"><span class="tag">MySQL</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Odoo/"><span class="tag">Odoo</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Odoo%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97/"><span class="tag">Odoo开发者指南</span><span class="tag">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/OpenWRT/"><span class="tag">OpenWRT</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/PostgreSQL/"><span class="tag">PostgreSQL</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Python/"><span class="tag">Python</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/RaspberryPI/"><span class="tag">RaspberryPI</span><span class="tag">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/RuoYi/"><span class="tag">RuoYi</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SQLServer/"><span class="tag">SQLServer</span><span class="tag">8</span></a></div><div class="control"><a class="tags has-addons" href="/tags/STM32/"><span class="tag">STM32</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SlapOS/"><span class="tag">SlapOS</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Superset/"><span class="tag">Superset</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Windows/"><span class="tag">Windows</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Zope/"><span class="tag">Zope</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB/"><span class="tag">工具分享</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/"><span class="tag">数据可视化</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%AC%94%E8%AE%B0/"><span class="tag">笔记</span><span class="tag">1</span></a></div></div></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/static/logos.jpeg" alt="Junle&#039;s Blog" height="28"></a><p class="is-size-7"><span>&copy; 2024 Junle</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

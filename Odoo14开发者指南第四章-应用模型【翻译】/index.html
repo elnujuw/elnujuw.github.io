@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Odoo14开发者指南第四章-应用模型【翻译】 - Junle&#039;s Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Junle&#039;s Blog"><meta name="msapplication-TileImage" content="/static/logos.jpeg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Junle&#039;s Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="本章中的教程将对现有的附加模块稍稍进行补充。在上一章中，我们在Odoo实例中注册了我们的附加模块。在本章中，我们将对模块的数据库方面进行深入的探讨。我们将添加一个新模型（数据库表）、新字段和约束。我们还将研究Odoo中模型的继承使用。"><meta property="og:type" content="blog"><meta property="og:title" content="Odoo14开发者指南第四章-应用模型【翻译】"><meta property="og:url" content="https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><meta property="og:site_name" content="Junle&#039;s Blog"><meta property="og:description" content="本章中的教程将对现有的附加模块稍稍进行补充。在上一章中，我们在Odoo实例中注册了我们的附加模块。在本章中，我们将对模块的数据库方面进行深入的探讨。我们将添加一个新模型（数据库表）、新字段和约束。我们还将研究Odoo中模型的继承使用。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.junle.org/images/Update_Odoo_apps.png"><meta property="og:image" content="https://www.junle.org/images/Creating_new_decimal_precision.png"><meta property="og:image" content="https://www.junle.org/images/Currency_symbol_in_the_monetary_field.png"><meta property="article:published_time" content="2022-06-08T06:55:20.000Z"><meta property="article:modified_time" content="2024-03-22T06:43:55.678Z"><meta property="article:author" content="Junle"><meta property="article:tag" content="Odoo开发者指南"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://www.junle.org/images/Update_Odoo_apps.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"},"headline":"Odoo14开发者指南第四章-应用模型【翻译】","image":["https://www.junle.org/images/Update_Odoo_apps.png","https://www.junle.org/images/Creating_new_decimal_precision.png","https://www.junle.org/images/Currency_symbol_in_the_monetary_field.png"],"datePublished":"2022-06-08T06:55:20.000Z","dateModified":"2024-03-22T06:43:55.678Z","author":{"@type":"Person","name":"Junle"},"publisher":{"@type":"Organization","name":"Junle's Blog","logo":{"@type":"ImageObject","url":"https://www.junle.org/static/logos.jpeg"}},"description":"本章中的教程将对现有的附加模块稍稍进行补充。在上一章中，我们在Odoo实例中注册了我们的附加模块。在本章中，我们将对模块的数据库方面进行深入的探讨。我们将添加一个新模型（数据库表）、新字段和约束。我们还将研究Odoo中模型的继承使用。"}</script><link rel="canonical" href="https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><link rel="alternate" href="/atom.xml" title="Junle&#039;s Blog" type="application/atom+xml"><link rel="icon" href="/static/logos.jpeg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/monokai-sublime.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/static/logos.jpeg" alt="Junle&#039;s Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/tags">标签</a></div><div class="navbar-end"><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2022-06-08T06:55:20.000Z" title="2022/6/8 14:55:20">2022-06-08</time>发表</span><span class="level-item"><time dateTime="2024-03-22T06:43:55.678Z" title="2024/3/22 14:43:55">2024-03-22</time>更新</span><span class="level-item">2 小时读完 (大约17753个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">Odoo14开发者指南第四章-应用模型【翻译】</h1><div class="content"><p>本章中的教程将对现有的附加模块稍稍进行补充。在上一章中，我们在Odoo实例中注册了我们的附加模块。在本章中，我们将对模块的数据库方面进行深入的探讨。我们将添加一个新模型（数据库表）、新字段和约束。我们还将研究Odoo中模型的继承使用。本章中我们将继续使用在<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第三章</a>中创建的附加模块。<br>本章中包含以下小节：</p>
+<ul>
+<li><p><a href="#%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%8E%B0%E5%8F%8A%E6%8E%92%E5%BA%8F">定义模型表现及排序</a></p>
+</li>
+<li><p><a href="#%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E6%95%B0%E6%8D%AE%E5%AD%97%E6%AE%B5">向模型添加数据字段</a></p>
+</li>
+<li><p><a href="#%E4%BD%BF%E7%94%A8%E5%8F%AF%E9%85%8D%E7%BD%AE%E7%B2%BE%E5%BA%A6%E7%9A%84%E6%B5%AE%E7%82%B9%E5%9E%8B%E5%AD%97%E6%AE%B5">使用可配置精度的浮点型字段</a></p>
+</li>
+<li><p><a href="#%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E8%B4%A7%E5%B8%81%E5%AD%97%E6%AE%B5">向模型添加货币字段</a></p>
+</li>
+<li><p><a href="#%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E5%85%B3%E8%81%94%E5%AD%97%E6%AE%B5">向模型添加关联字段</a></p>
+</li>
+<li><p><a href="#%E6%B7%BB%E5%8A%A0%E6%A8%A1%E5%9E%8B%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84">添加模型层次结构</a></p>
+</li>
+<li><p><a href="#%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E7%BA%A6%E6%9D%9F%E9%AA%8C%E8%AF%81">向模型添加约束验证</a></p>
+</li>
+<li><p><a href="#%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E8%AE%A1%E7%AE%97%E5%AD%97%E6%AE%B5">向模型添加计算字段</a></p>
+</li>
+<li><p><a href="#%E6%9A%B4%E9%9C%B2%E5%AD%98%E5%82%A8%E5%9C%A8%E5%85%B6%E4%BB%96%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%85%B3%E5%AD%97%E6%AE%B5">暴露存储在其他模型中的相关字段</a></p>
+</li>
+<li><p><a href="#%E4%BD%BF%E7%94%A8%E5%BC%95%E7%94%A8%E5%AD%97%E6%AE%B5%E6%B7%BB%E5%8A%A0%E5%8A%A8%E6%80%81%E5%85%B3%E8%81%94">使用引用字段添加动态关联</a></p>
+</li>
+<li><p><a href="#%E4%BD%BF%E7%94%A8%E7%BB%A7%E6%89%BF%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E5%8A%9F%E8%83%BD">使用继承向模型添加功能</a></p>
+</li>
+<li><p><a href="#%E4%BD%BF%E7%94%A8%E7%BB%A7%E6%89%BF%E5%A4%8D%E5%88%B6%E6%A8%A1%E5%9E%8B%E5%AE%9A%E4%B9%89">使用继承复制模型定义</a></p>
+</li>
+<li><p><a href="#%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86%E7%BB%A7%E6%89%BF%E5%B0%86%E5%8A%9F%E8%83%BD%E5%A4%8D%E5%88%B6%E8%87%B3%E5%8F%A6%E4%B8%80%E4%B8%AA%E6%A8%A1%E5%9E%8B">使用代理继承将功能复制至另一个模型</a></p>
+</li>
+<li><p><a href="#%E4%BD%BF%E7%94%A8%E6%8A%BD%E8%B1%A1%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%E6%A8%A1%E5%9E%8B%E5%8A%9F%E8%83%BD">使用抽象模型实现可复用的模型功能</a></p>
+</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="技术要求"><a href="#技术要求" class="headerlink" title="技术要求"></a>技术要求</h2><p>您应该拥有我们在<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第三章</a>创建的模块，并且该模块必须可以使用。<br>本章中使用的所有代码都可以从<a target="_blank" rel="noopener" href="https://github.com/PacktPublishing/Odoo-14-Development-Cookbook-Fourth-Edition/tree/master/Chapter04">https://github.com/PacktPublishing/Odoo-14-Development-Cookbook-Fourth-Edition/tree/master/Chapter04</a>上下载。</p>
+<h2 id="定义模型表现及排序"><a href="#定义模型表现及排序" class="headerlink" title="定义模型表现及排序"></a>定义模型表现及排序</h2><p>模型中使用结构性属性来定义模型的行为，这些属性是前缀带下划线的。<em>_name</em> 属性是模型中最重要的属性，它是模型的内部全局标识符，Odoo会根据<em>_name</em> 属性来创建数据库表。例如：模型的<em>_name&#x3D;”library.book”</em> ，Odoo的ORM会在数据库中创建名为<em>library_book</em> 的表。模型的<em>_name</em> 属性在整个Odoo实例中必须是唯一的。<br>在模型中可以使用另外两个属性：</p>
+<ul>
+<li><strong>_rac_name</strong> ：用于设置用作记录的表示或标题的字段。</li>
+<li><strong>_order</strong> ：用于设置记录的排序。</li>
+</ul>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>你需要准备好一个带有<strong>my_library</strong> 模块的Odoo实例（第三章中创建的模块）。</p>
+<h3 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h3><p><em>my_library</em> 模块应该已经包含一个名为<em>models/library_book.py</em> 的Python文件，它定义了一个基本模型。我们将对其进行编辑，在<em>_name</em> 之后添加一个新的类级属性：</p>
+<ol>
+<li><p>要为模型添加用户友好的标题，请添加以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_description = <span class="string">&#x27;Library Book&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要首先对记录进行排序（从最新到最旧，然后按标题排序），请添加以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_order = <span class="string">&#x27;date_release desc, name&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要将<em>short_name</em> 字段用作记录的显示，请添加以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_rec_name = <span class="string">&#x27;short_name&#x27;</span></span><br><span class="line">short_name = fields.Char(<span class="string">&#x27;Short Title&#x27;</span>, required=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在表单视图中添加<em>short_name</em> 字段，以便它可以在视图中显示新字段：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;short_name&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>完成后，我们的<em>library_book.py</em> 文件应如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> models, fields</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.book&#x27;</span></span><br><span class="line">    _description = <span class="string">&#x27;Library Book&#x27;</span></span><br><span class="line">    _order = <span class="string">&#x27;date_release desc, name&#x27;</span></span><br><span class="line">    _rec_name = <span class="string">&#x27;short_name&#x27;</span></span><br><span class="line">    </span><br><span class="line">    name = fields.Char(<span class="string">&#x27;Title&#x27;</span>, required=<span class="literal">True</span>)</span><br><span class="line">    short_name = fields.Char(<span class="string">&#x27;Short Title&#x27;</span>, required=<span class="literal">True</span>)</span><br><span class="line">    date_release = fields.Date(<span class="string">&#x27;Release Date&#x27;</span>)</span><br><span class="line">    author_ids = fields.Many2many(<span class="string">&#x27;res.partner&#x27;</span>, string=<span class="string">&#x27;Authors&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><em>library_book.xml</em> 文件中的<em>&lt;form&gt;</em> 视图将如下所示：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">group</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">group</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;author_ids&quot;</span> <span class="attr">widget</span>=<span class="string">&quot;many2many_tags&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">group</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;short_name&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;date_release&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们需要升级模块以激活Odoo中的这些更改。要更新模块，您可以打开<strong>Apps</strong> 菜单，搜索<strong>my_library</strong> 模块，然后通过下拉列表更新模块，如下图所示：</p>
+<p>   <img src="/images/Update_Odoo_apps.png" alt="更新模块选项"></p>
+<p>或者，您也可以在命令行中使用<strong>-u my_library</strong> 命令来更新模块。</p>
+<h3 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h3><p>第一步为模型的定义添加一个对用户更友好的标题。这不是强制性的，但可以为一些附加组件使用。例如，邮件插件模块中的跟踪功能将它用于创建新记录时的通知文本。 有关详细信息，请参阅第二十三章，在Odoo中管理电子邮件。如果您的模型不使用<em>_description</em> ，在这种情况下，Odoo将在日志中显示警告信息。</p>
+<p>默认情况下，Odoo使用内部id值（自动生成的主键）对记录进行排序。但是，这可以更改，我们可以通过提供一个包含字段名以逗号隔开的字符串作为<em>_order</em> 属性，字段名称后可以跟<em>desc</em> 关键字以降序排列。</p>
+<blockquote>
+<p><strong>重要提示</strong><br>只能使用存储在数据库中的字段。非存储计算域不能用于对记录进行排序；<br><em>_order</em> 字符串的语法类似于SQL ORDER BY子句，不允许使用例如NULLS FIRST等特殊子句；</p>
+</blockquote>
+<p>模型记录在被其他记录引用时使用的一种表示形式。例如，user_id值为1的 员用户代表的管理员用户。当在表单视图中显示时，Odoo将显示用户名，而不是数据库ID。简而言之，<em>_rec_name</em> 是用于Odoo界面上显示记录的名称。默认情况下，使用的是<em>name</em> 字段。事实上，这是<em>_rec_name</em> 属性的默认值。在我们的示例中，<em>library.book</em> 模型有一个<em>name</em> 字段，因此，默认情况下，Odoo将使用它作为显示名称。我们第3步中使用了<em>short_name</em> 作为<em>_rec_name</em> 。之后，<em>library.book</em> 模型的显示名称从<em>name</em> 更改为了<em>short_name</em> ，Odoo显示界面将使用<em>short_name</em> 的值来展示记录。</p>
+<blockquote>
+<p><strong>警告</strong><br>如果您的模型没有<em>name</em> 字段并且在这种情况下您也没有指定<em>_rec_name</em> ，那么您的显示名称将是模型名称和记录ID的组合，如下所示：<em>(library.book, 1)</em> 。</p>
+</blockquote>
+<p>由于我们向模型添加了一个新字段<em>short_name</em> ，Odoo的ORM将向数据库表添加一个新列，但它不会在视图中显示该字段。为此，我们需要将此字段添加到表单视图中。在第4步中，我们将<em>short_name</em> 字段添加到表单视图中。</p>
+<h3 id="扩展内容"><a href="#扩展内容" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>记录的展示也可以在一个神奇的计算<strong>display_name</strong> 设置，并且自8.0版以来已自动添加到所有模型中。它的值是使用<strong>name_get()</strong> 模型方法生成的，该方法在当前版本的Odoo中已经存在。</p>
+<p><em>name_get()</em> 的默认实现使用<em>_rec_name</em> 属性来查找哪个字段保存数据，用于生成显示名称。如果您想要自己实现显示名称的方法，您可以覆盖<em>name_get()</em> 的逻辑以生成自定义显示名称。该方法必须返回一个包含两个元素的元组列表：记录的ID和记录的Unicode字符串。</p>
+<p>例如，要在显示中包含标题及其发布日期，例如<em>Moby Dick (1851-10-18)</em> ，我们可以定义以下内容：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">name_get</span>(<span class="params">self</span>):</span><br><span class="line">    result = []</span><br><span class="line">    <span class="keyword">for</span> record <span class="keyword">in</span> self:</span><br><span class="line">        rec_name = <span class="string">&quot;%s (%s)&quot;</span> % (record.name, record.date_release)</span><br><span class="line">        result.append((record.<span class="built_in">id</span>, rec_name))</span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+
+<p>添加上述代码后，您的<em>display_name</em> 记录将被更新。假设您有一个名为<em>Odoo Cookbook</em> 的记录和发布日期为<em>19-04-2019</em> ，那么前面的<em>name_get()</em> 方法会生成一个这样的名字<em>Cookbook (19-04-2019)</em> 。</p>
+<h2 id="向模型添加数据字段"><a href="#向模型添加数据字段" class="headerlink" title="向模型添加数据字段"></a>向模型添加数据字段</h2><p>模型用于存储数据，并且这些数据是按字段构造的。在这里，您将了解可以存储在字段中的几种数据类型，以及如何将它们添加到模型中。</p>
+<h3 id="准备工作-1"><a href="#准备工作-1" class="headerlink" title="准备工作"></a>准备工作</h3><p>你需要准备好一个带有<strong>my_library</strong> 模块的Odoo实例（第三章中创建的模块）。</p>
+<h3 id="实现过程-1"><a href="#实现过程-1" class="headerlink" title="实现过程"></a>实现过程</h3><p><em>my_library</em> 模块应该已经有<em>models/library_book.py</em> 定义了一个基本模型。 我们将对其进行编辑以添加新字段：</p>
+<ol>
+<li>使用最少的语法添加字段到<em>Libraty Book</em> 模型：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> models, fields</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    short_name = fields.Char(<span class="string">&#x27;Short Title&#x27;</span>)</span><br><span class="line">    notes = fields.Text(<span class="string">&#x27;Internal Notes&#x27;</span>)</span><br><span class="line">    state = fields.Selection(</span><br><span class="line">        [(<span class="string">&#x27;draft&#x27;</span>, <span class="string">&#x27;Not Available&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;available&#x27;</span>, <span class="string">&#x27;Available&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;lost&#x27;</span>, <span class="string">&#x27;Lost&#x27;</span>)],</span><br><span class="line">        <span class="string">&#x27;State&#x27;</span>)</span><br><span class="line">    description = fields.Html(<span class="string">&#x27;Description&#x27;</span>)</span><br><span class="line">    cover = fields.Binary(<span class="string">&#x27;Book Cover&#x27;</span>)</span><br><span class="line">    out_of_print = fields.Boolean(<span class="string">&#x27;Out of Print?&#x27;</span>)</span><br><span class="line">    date_release = fields.Date(<span class="string">&#x27;Release Date&#x27;</span>)</span><br><span class="line">    date_updated = fields.Datetime(<span class="string">&#x27;Last Updated&#x27;</span>)</span><br><span class="line">    pages = fields.Integer(<span class="string">&#x27;Number of Pages&#x27;</span>)</span><br><span class="line">    reader_rating = fields.Float(</span><br><span class="line">        <span class="string">&#x27;Reader Average Rating&#x27;</span>,</span><br><span class="line">        digits=(<span class="number">14</span>, <span class="number">4</span>), <span class="comment"># Optional precision decimals,</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>我们在模型中添加了新字段。我们仍然需要将这些字段添加到表单视图中，以便在用户界面中反映这些更改。参考以下代码在表单视图中添加字段：</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">group</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">group</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;author_ids&quot;</span> <span class="attr">widget</span>=<span class="string">&quot;many2many_tags&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;state&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;pages&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;notes&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">group</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;short_name&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;date_release&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;date_updated&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;cover&quot;</span> <span class="attr">widget</span>=<span class="string">&quot;image&quot;</span> <span class="attr">class</span>=<span class="string">&quot;oe_avatar&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;reader_rating&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">group</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;description&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">group</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>升级模块将使这些更改在 Odoo 模型中生效。<br>查看如下这些不同字段的示例。这里我们对字段使用了不同类型的属性。这会让读者对字段声明拥有更好的概念：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">short_name = fields.Char(<span class="string">&#x27;Short Title&#x27;</span>,translate=<span class="literal">True</span>, index=<span class="literal">True</span>)</span><br><span class="line">state = fields.Selection(</span><br><span class="line">    [(<span class="string">&#x27;draft&#x27;</span>, <span class="string">&#x27;Not Available&#x27;</span>),</span><br><span class="line">    (<span class="string">&#x27;available&#x27;</span>, <span class="string">&#x27;Available&#x27;</span>),</span><br><span class="line">    (<span class="string">&#x27;lost&#x27;</span>, <span class="string">&#x27;Lost&#x27;</span>)],</span><br><span class="line">    <span class="string">&#x27;State&#x27;</span>, default=<span class="string">&quot;draft&quot;</span>)</span><br><span class="line">description = fields.Html(<span class="string">&#x27;Description&#x27;</span>, sanitize=<span class="literal">True</span>, strip_style=<span class="literal">False</span>)</span><br><span class="line">pages = fields.Integer(<span class="string">&#x27;Number of Pages&#x27;</span>,</span><br><span class="line">    groups=<span class="string">&#x27;base.group_user&#x27;</span>,</span><br><span class="line">    states=&#123;<span class="string">&#x27;lost&#x27;</span>: [(<span class="string">&#x27;readonly&#x27;</span>, <span class="literal">True</span>)]&#125;,</span><br><span class="line">    <span class="built_in">help</span>=<span class="string">&#x27;Total book page count&#x27;</span>, company_dependent=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="运行原理-1"><a href="#运行原理-1" class="headerlink" title="运行原理"></a>运行原理</h3><p>通过在其Python类中定义一个属性，将字段添加到模型中。可用的非关系字段类型如下：</p>
+<ul>
+<li><p><strong>Char</strong> 用于字符串值。</p>
+</li>
+<li><p><strong>Text</strong> 用于多行字符串值。</p>
+</li>
+<li><p><strong>Selection</strong> 用于选择列表。这是一个值和描述的列表。所选择的值会存储在数据库中，可以是字符串或整型。描述可自动翻译。</p>
+<blockquote>
+<p>重要提示<br>在Selection类型的字段中，值您可以使用整数，但注意Odoo会将0解释为内部未设置，如果存储的值为0，则不会显示描述。因此您需要考虑到这一点。</p>
+</blockquote>
+</li>
+<li><p><strong>Html</strong> 类似于文本字段，通常以HTML格式存的储富文本。</p>
+</li>
+<li><p><strong>Binary</strong> 二进制字段存储二进制文件，例如图像或文档。</p>
+</li>
+<li><p><strong>Boolean</strong> 布尔类型，存储<em>True&#x2F;False</em> 值。</p>
+</li>
+<li><p><strong>Date</strong> 用于存储日期值。在数据库中以日期存储。在ORM中以Python日期对象的形式处理。您可以使用<em>fields.Date.today()</em> 将当前日期设置为日期字段中的默认值。</p>
+</li>
+<li><p><strong>Datetime</strong> 用于存储日期时间值。在数据库中以原生<strong>UTC</strong> 时区存储。在ORM中以Python日期时间对象的形式处理。您可以使用<em>fields.Date.now()</em> 将当前时间设置为DateTime字段中的默认值。</p>
+</li>
+<li><p><strong>Integer</strong> 字段无需进一步解释。</p>
+</li>
+<li><p><strong>Float</strong> 字段存储数值。精度可以用总位数和小数位数来定义。</p>
+</li>
+<li><p><strong>Monetary</strong> 可以存储某种货币的金额。这也将在本章的<em>向模型添加货币字段</em> 中进行解释。</p>
+</li>
+</ul>
+<p>本小节第一步展示了添加到每个字段类型的最小语法。第二步中扩展了字段定义的其他可选属性。<br>这是对使用的字段属性的解释：</p>
+<ul>
+<li><p><strong>string</strong> 是字段的标题，用于Odoo界面视图标签。它是可选的。如果未设置，自动通过字段名首字母大写，并用空格替换下划线规则产生。</p>
+</li>
+<li><p><strong>translate</strong> 当设置为<em>True</em> 时，该字段可翻译。该字段可以根据用户界面设置的语言来保存不同的值。</p>
+</li>
+<li><p><strong>default</strong> 字段的默认值，也可以设置为一个计算默认值的函数；例如：<code>default = _computer_default</code>，其中<em>_compute_default</em> 是在字段定义之前在模型上定义的方法。</p>
+</li>
+<li><p><strong>help</strong> 是显示在界面提示中的说明文本。</p>
+</li>
+<li><p><strong>groups</strong> 使该字段仅对某些安全组可用。它是一个字符串，包含以逗号分隔的安全组XML ID列表。这在第十章<em>《安全访问》</em> 中有更详细的说明。</p>
+</li>
+<li><p><strong>states</strong> 允许用户界面根据<em>state</em> 字段的值来动态设置<em>readonly</em> 、<em>required</em> 和<em>invisible</em> 属性的值。因此，它需要<em>state</em> 字段存在并在表单视图中使用（即使它是隐藏的）。状态属性的名称在Odoo中是硬编码的，不能更改。</p>
+</li>
+<li><p><strong>copy</strong> 标记在复制记录时是否复制字段值。默认情况下，非关联字段和<em>Many2one</em> 字段为True，<em>One2many</em> 和计算字段为 False。</p>
+</li>
+<li><p><strong>index</strong> 当设置为<em>True</em> 时，为该字段会创建一个数据库索引。它替换了已弃用的<code>select=1</code>属性。</p>
+</li>
+<li><p><strong>readonly</strong> 标志该字段在用户界面中默认为只读。</p>
+</li>
+<li><p><strong>required</strong> 标志该字段在用户界面中默认为必填项。</p>
+<blockquote>
+<p>这里提到的各种白名单在<em>odoo&#x2F;tools&#x2F;mail.py</em> 中定义。</p>
+</blockquote>
+</li>
+<li><p><strong>company_dependent</strong> 标志该字段按不同的公司存储不同的值。取代了已弃用的<em>Property</em> 字段类型。</p>
+</li>
+<li><p><strong>group_operator</strong> 是一个聚合函数，用于在<em>group by</em> 模式下显示结果。此属性的可能值包括<em>count</em> 、<em>count_distinct</em> 、<em>array_agg</em> 、<em>bool_and</em> 、<em>bool_or</em> 、<em>max</em> 、<em>min</em> 、<em>avg</em> 和<em>sum</em> 。整数、浮点数和货币字段类型此属性的默认值为<em>sum</em> 。</p>
+</li>
+<li><p><strong>sanitize</strong> 标志用于HTML字段，并从可能不安全的标签中去除其内容。使用它执行输入的全局清理。<br> 如果您需要对HTML清理进行更精细的控制，可以使用以下属性，这些属性仅在启用<em>sanitize</em> 时才有效：</p>
+<ul>
+<li><strong>sanitize_tags&#x3D;True</strong>：删除不属于白名单的标签（这是默认设置）</li>
+<li><strong>sanitize_attributes&#x3D;True</strong>：删除不属于白名单的标签的属性</li>
+<li><strong>sanitize_style&#x3D;True</strong>：删除不属于白名单的样式属性</li>
+<li><strong>strip_style&#x3D;True</strong>：删除所有样式元素</li>
+<li><strong>strip_class&#x3D;True</strong>：删除类属性</li>
+</ul>
+</li>
+</ul>
+<p>最后，我们根据模型中新增的字段更新了表单视图。我们在这里以任意方式放置 <strong>&lt;field&gt;</strong> 标记，但您也可以将它们放置在任何您想要的位置。表单视图在第九章<em>《后端视图》</em> 中有更详细的解释。</p>
+<h3 id="扩展内容-1"><a href="#扩展内容-1" class="headerlink" title="扩展内容"></a>扩展内容</h3><p><em>Selection</em> 字段还接受函数引用作为其选择属性而不是列表。这允许动态生成选项列表。您可以在本章的<em>使用引用字段添加动态关联</em> 一节中找到与此相关的示例，其中也使用了选择属性。</p>
+<p><em>Date</em> 和<em>Datetime</em> 字段对象公开了一些方便的实用方法。</p>
+<p>对于<em>Date</em> ，我们有以下内容：</p>
+<ul>
+<li><strong>fields.Date.to_date(string_value)</strong> ：将字符串解析为日期对象。</li>
+<li><strong>fields.Date.to_string(date_value)</strong> ：将Python Date对象转换为字符串。</li>
+<li><strong>fields.Date.today()</strong> ：以字符串格式返回当前日期。这适用于默认值。</li>
+<li><strong>fields.Date.context_today(record, timestamp)</strong> ：根据记录（或记录集）上下文的时区，以字符串格式返回时间戳的日期（如果省略时间戳，返回当前日期）。</li>
+</ul>
+<p>对于<em>Datetime</em> ，我们有以下内容：</p>
+<ul>
+<li><strong>fields.Datetime.to_datetime(string_value)</strong> ：将字符串解析为日期时间对象。</li>
+<li><strong>fields.Datetime.to_string(datetime_value)</strong> ：将日期时间对象转换为字符串。</li>
+<li><strong>fields.Datetime.now()</strong> ：以字符串格式返回当前日期和时间。这适用于默认值。</li>
+<li><strong>fields.Datetime.context_timestamp(record, timestamp)</strong> ：将原生的时间戳Datime对象转换到记录的上下文中的时区。这不适用于默认值，但可用于将数据发送到外部系统的实例。</li>
+</ul>
+<p>除了基本字段，我们还有关系字段：<em>Many2one</em> 、<em>One2many</em> 和<em>Many2many</em> 。这些在本章的<em>向模型添加关联字段</em> 中进行了解释。</p>
+<p>也可以有具有自动计算值的字段，使用<em>计算字段</em> 属性定义计算函数。这在<em>向模型添加计算字段</em> 中进行了说明。</p>
+<p>在Odoo模型中默认添加了一些字段，因此我们不应该为我们的字段使用这些名称。这些是id字段，用于记录自动生成的标识符，以及一些审计日志字段，如下所示：</p>
+<ul>
+<li><strong>create_date</strong> ：记录创建的时间戳。</li>
+<li><strong>create_uid</strong> ：记录创建的用户。</li>
+<li><strong>write_date</strong> ：记录最后一次修改的时间戳。</li>
+<li><strong>write_uid</strong> ：记录最后一次修改的用户。</li>
+</ul>
+<p>可以通过设置<strong>_log_access&#x3D;False</strong> 模型属性来禁用这些日志字段的自动创建。<br>另一个特殊字段是<strong>active</strong> 。它必须是一个布尔字段，允许用户将记录标记为非活动。它用于启用记录的归档&#x2F;取消归档功能。其定义如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">active = fields.Boolean(<span class="string">&#x27;Active&#x27;</span>, default=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，只有<strong>active</strong> 属性设置为<strong>True</strong> 的记录才可见，要检索它们，我们需要使用带有<strong>[(‘active’, ‘&#x3D;’, False)]</strong> 的域过滤器。或者，如果<code>&#39;active_test&#39;: False</code>值被添加到环境的上下文中，ORM将不会过滤掉非活动记录。</p>
+<p>在某些情况下，您可能无法修改上下文以获取活动记录和非活动记录。在这种情况下，您可以使用<strong>[‘|’, (‘active’, ‘&#x3D;’, True), (‘active’, ‘&#x3D;’, False)]</strong> 域过滤器。</p>
+<blockquote>
+<p><strong>警告</strong><br><strong>[(‘active’, ‘in’ (True, False))]</strong> 不像你想象的那样工作。Odoo明确地在域中寻找* (‘active’, ‘&#x3D;’, False)* 子句。它将默认将搜索限制为仅活动记录。</p>
+</blockquote>
+<h2 id="使用可配置精度的浮点型字段"><a href="#使用可配置精度的浮点型字段" class="headerlink" title="使用可配置精度的浮点型字段"></a>使用可配置精度的浮点型字段</h2><p>使用浮点字段时，我们可能希望让用户可配置要使用的小数精度。在本节中，我们将向Library Books模型添加一个成本价格字段，该字段具有用户可配置的小数精度。</p>
+<h3 id="准备工作-2"><a href="#准备工作-2" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>执行以下步骤以将动态小数精度应用于模型的<em>cost_price</em> 字段：</p>
+<ol>
+<li><p>从设置菜单中的链接激活开发人员模式（请参阅<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%AE%89%E8%A3%85Odoo%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第一章</a>安装Odoo开发环境中的激活Odoo激活Odoo开发者模式工具）。这将启用<strong>Settings | Technical</strong> 菜单。</p>
+</li>
+<li><p>访问小数精度配置。为此，请打开设置顶部菜单并选择<strong>Technical | Database Structure | Decimal Accuracy</strong> 。我们应该看到当前定义的设置列表。</p>
+</li>
+<li><p>添加新配置，将<strong>Usage</strong> 设置为<strong>Book Price</strong> ，并填写<strong>Digits</strong> 精度：</p>
+<p><img src="/images/Creating_new_decimal_precision.png" alt="创建新的小数精度"></p>
+</li>
+<li><p>要使用此小数精度设置需要添加模型字段，请通过添加以下代码来编辑<em>models&#x2F;library_book.py</em> 文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    cost_price = fields.Float(<span class="string">&#x27;Book Cost&#x27;</span>, digits=<span class="string">&#x27;Book Price&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>提示</strong><br>每当您在模型中添加新字段时，您还需要将它们添加到视图中以便从用户界面访问它们。在前面的示例中，我们添加了<em>cost_price</em> 字段。 要在表单视图中看到这一点，您需要使用<code>&lt;field name=&quot;cost_price&quot;/&gt;</code>添加它。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="运行原理-2"><a href="#运行原理-2" class="headerlink" title="运行原理"></a>运行原理</h3><p>当您将字符串值添加到字段的<strong>digits</strong> 属性时，Odoo在小数精度模型的<strong>Usage</strong> 字段中查找该字符串并返回具有<strong>16</strong> 位精度和配置中定义的小数位数的元组。使用字段定义，而不是硬编码，允许最终用户根据他们的需要进行配置。</p>
+<blockquote>
+<p><strong>提示</strong><br>如果您使用的是<em>v13</em> 之前的版本，则需要一些额外的工作才能在浮点字段中使用<strong>digits</strong> 属性。在旧版本中，小数精度在一个名为<strong>decimal_precision</strong> 的单独模块中。要在您的字段中启用自定义小数精度，您必须使用<strong>decimal_precision</strong> 模块的<code>get_precision()</code>方法，如下所示：<strong>cost_price &#x3D; fields.Float(‘Book Cost’, digits&#x3D;dp.get_precision(‘Book Price’))</strong> 。</p>
+</blockquote>
+<h2 id="向模型添加货币字段"><a href="#向模型添加货币字段" class="headerlink" title="向模型添加货币字段"></a>向模型添加货币字段</h2><p>Odoo对与货币相关的货币字段有特殊的支持。 让我们看看如何在模型中使用它。</p>
+<h3 id="准备工作-3"><a href="#准备工作-3" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-1"><a href="#实现步骤-1" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>货币字段需要一个额外的币别字段来存储相应的货币金额。</p>
+<p><strong>my_library</strong> 已经有<em>models&#x2F;library_book.py</em> ，它定义了一个基本模型。我们将对其进行编辑以添加必填字段：</p>
+<ol>
+<li><p>添加币别字段用于存储币别：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    currency_id = fields.Many2one(<span class="string">&#x27;res.currency&#x27;</span>, string=<span class="string">&#x27;Currency&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加货币字段用于存储金额：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    retail_price = fields.Monetary(<span class="string">&#x27;Retail Price&#x27;</span>,</span><br><span class="line">        <span class="comment"># optional: currency_field=&#x27;currency_id&#x27;,</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>现在，升级附加模块，新字段应该在模型中可用。在将它们添加到视图之前，它们不会在视图中可见，但我们可以通过开发者模式进入到<strong>Settings | Technical | Database Structure | Models</strong> 中查看。</p>
+<p>将它们添加到表单视图后，它将如下所示：</p>
+<p>   <img src="/images/Currency_symbol_in_the_monetary_field.png" alt="货币字段的货币符号"></p>
+<h3 id="运行原理-3"><a href="#运行原理-3" class="headerlink" title="运行原理"></a>运行原理</h3><p>货币字段类似于浮点型字段，Odoo能够在用户界面中正确地表示它们，因为它通过第二个字段知道它们的货别是什么。</p>
+<p>这个货币字段应该被称为<strong>currency_id</strong> ，但我们可以使用我们喜欢的任何字段名称，只要它使用可选的<strong>currency_field</strong> 参数来指示即可。</p>
+<blockquote>
+<p><strong>提示</strong><br>如果您将币别信息存储在名称为<em>currency_id</em> 的字段中，则可以省略货币字段中的<em>currency_field</em> 属性。<br>当您需要在同一记录中维护不同货币的金额时，这非常有用。例如，如果我们要包含销售订单的货币和公司的货币，您可以将这两个字段配置为<code>fields.Many2one(res.currency)</code>并将第一个用于第一个金额，另一个用于 第二笔金额。<br>您还应知道金额的小数精度取自货币定义（<em>res.currency</em> 模型的<em>decimal_precision</em> 字段）。</p>
+</blockquote>
+<h2 id="向模型添加关联字段"><a href="#向模型添加关联字段" class="headerlink" title="向模型添加关联字段"></a>向模型添加关联字段</h2><p>Odoo模型之间的关系由关系字段表示。存在三种不同类型的关系：</p>
+<ul>
+<li><strong>many-to-one</strong> ：多对一，通常缩写为m2o。</li>
+<li><strong>one-to-many</strong> ：一对多，通常缩写为o2m。</li>
+<li><strong>many-to-many</strong> ：多对多，通常缩写为m2m。</li>
+</ul>
+<p>查看<strong>Library Books</strong> 示例，我们可以看到每本书只能有一个出版商，因此我们可以在书籍和出版商之间建立多对一的关系。</p>
+<p>但是，每个出版商可以拥有许多书籍。 因此，前面的多对一关系意味着一对多的反向关系。</p>
+<p>最后，在某些情况下，我们可以建立多对多关系。在我们的示例中，每本书可以有几个（许多）作者。此外，相反，每个作者可能写过很多书。从任何一方来看，这是一个多对多的关系。</p>
+<h3 id="准备工作-4"><a href="#准备工作-4" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-2"><a href="#实现步骤-2" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>Odoo使用<em>partner</em> 模型<strong>res.partner</strong> 来表示人员、组织和地址。我们应该为作者和出版商使用它。我们将编辑<strong>models&#x2F;library_book.py</strong> 文件以添加这些字段：</p>
+<ol>
+<li><p>向Library Books模型添加图书出版商的多对一（<strong>many-to-one</strong> ）字段:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    publisher_id = fields.Many2one(</span><br><span class="line">    	   <span class="string">&#x27;res.partner&#x27;</span>, string=<span class="string">&#x27;Publisher&#x27;</span>,</span><br><span class="line">        <span class="comment"># optional:</span></span><br><span class="line">        ondelete=<span class="string">&#x27;set null&#x27;</span>,</span><br><span class="line">        context=&#123;&#125;,</span><br><span class="line">        domain=[],</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要为出版商的书籍添加一对多（<strong>one-to-many</strong> ）字段，我们需要扩展<em>partner</em> 模型。为简单起见，我们将其添加到同一个 Python文件中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ResPartner</span>(models.Model):</span><br><span class="line">    _inherit = <span class="string">&#x27;res.partner&#x27;</span></span><br><span class="line">    published_book_ids = fields.One2many(</span><br><span class="line">        <span class="string">&#x27;library.book&#x27;</span>, <span class="string">&#x27;publisher_id&#x27;</span>,</span><br><span class="line">        string=<span class="string">&#x27;Published Books&#x27;</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>我们在这里使用的<strong>_inherit</strong> 属性用于继承现有模型。这将在本章后面的<em>使用继承向模型添加功能</em> 中解释。</p>
+</blockquote>
+</li>
+<li><p>我们已经创建了书籍和作者之间的多对多（<strong>many-to-many</strong> ）关系，但让我们重新查看一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    author_ids = fields.Many2many(<span class="string">&#x27;res.partner&#x27;</span>, string=<span class="string">&#x27;Authors&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>同样的关联，但作者对书籍的关联应该添加到<strong>partner</strong> 模型中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ResPartner</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    authored_book_ids = fields.Many2many(</span><br><span class="line">        <span class="string">&#x27;library.book&#x27;</span>,</span><br><span class="line">        string=<span class="string">&#x27;Authored Books&#x27;</span>,</span><br><span class="line">        <span class="comment"># relation=&#x27;library_book_res_partner_rel&#x27; # optional</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>现在，升级附加模块，新字段应该在模型中可用。在将它们添加到视图之前，它们不会出现在视图中，但我们可以通过开发者模式进入到<strong>Settings | Technical | Database Structure | Models</strong> 中查看。</p>
+<h3 id="运行原理-4"><a href="#运行原理-4" class="headerlink" title="运行原理"></a>运行原理</h3><p>多对一字段会在模型的数据库表中添加一列，存储相关记录的数据库ID。在数据库级别，还将创建外键约束，确保存储的ID是对相关表中记录的有效引用。这些关联字段不会创建数据库索引，但这可以通过添加<strong>index&#x3D;True</strong> 属性来创建数据库索引。</p>
+<p>我们可以看到还有四个属性可以用于多对一字段。<strong>ondelete</strong> 属性确定删除相关记录时会发生什么。例如，当图书的出版商记录被删除时，图书会发生什么情况？默认值为<strong>&#39;set null&#39;</strong> ，它在字段上设置一个空值。它也可以是<strong>&#39;restrict&#39;</strong> ，防止删除相关记录，或<strong>&#39;cascade&#39;</strong> ，这将导致链接的记录也被删除。</p>
+<p>最后两个（<strong>context</strong> 和<strong>domain</strong> ）对其他关系字段也有效。这些字段在客户端是很有意义的，在模型层面，它们作为默认值在客户端视图中使用。</p>
+<ul>
+<li><strong>context</strong> ：在点击字段进入相关记录视图时，会将添加到客户端上下文变量中。例如，我们可以用它来为创建的新记录设置默认值。</li>
+<li><strong>domain</strong> ：是一个搜索过滤器，用于限制可用的关联记录的列表。</li>
+</ul>
+<p>context和domain在第九章<em>《后台视图》</em> 中都有详细的解释。</p>
+<p>一对多字段是多对一的反关联，尽管它们像其他字段一样被添加到模型中，但它们在数据库中没有实际的表示。相反，它们是程序化的快捷方式，它们使视图能够表示这些相关记录的列表。这意味着一对多字段在关联模型中需要一个多对一字段。在我们的例子中，我们通过继承一个<em>partner</em> 模型来添加一对多字段。我们将在本章的<em>使用继承向模型添加功能</em> 中详细了解模型的继承。在我们的例子中，一对多字段<strong>published_book_ids</strong> 引用了<strong>library.book</strong> 模型的<strong>publisher_id</strong> 字段。</p>
+<p>多对多的关联也不为模型的表添加列。这种类型的关联在数据库中使用一个中间关联表来存储，其中两列存储两个关联对象的ID。在书籍和作者之间添加新关系会在关联表中创建一条新记录，其中包含书籍ID和作者ID。</p>
+<p>Odoo自动处理这个关联表的创建。默认情况下，关联表名称是使用两个关联模型的名称构建的，按字母顺序排序，加上一个<strong>_rel</strong> 后缀。但是，我们可以使用字段属性覆盖它。</p>
+<p>需要记住的一个情况是，当两个表名足够大，以至于自动生成的数据库标识符超过<em>PostgreSQL</em> 63个字符的限制时。根据规则，如果两个相关表的名称超过23个字符，则应使用字段属性设置较短的名称。在下一节中，我们将对此进行更详细的介绍。</p>
+<h3 id="扩展内容-2"><a href="#扩展内容-2" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>Many2one字段支持附加的<strong>auto_join</strong> 属性。这是一个允许ORM在该字段上使用SQL连接的标志。因此，它绕过了通常的ORM控制，例如用户访问控制和记录访问规则。在特定情况下，它可以解决性能问题，一般建议避免使用它。</p>
+<p>我们已经介绍了如何通过最简单的方法来定义关联字段。让我们看一下特定于该类型字段的属性。</p>
+<p><strong>One2many</strong> 字段有以下属性：</p>
+<ul>
+<li><strong>commodel_name</strong> ：这是目标模型标识符，对于所有关系字段都是必需的，但可以按位置定义，无需使用关键字。</li>
+<li><strong>inverse_name</strong> ：这仅适用于<strong>One2many</strong> 并且是反向<strong>Many2one</strong> 关联的目标模型中的字段名称。</li>
+<li><strong>limit</strong> ：这适用于<strong>One2many</strong> 和<strong>Many2many</strong> ，并可在用户界面级别限制用户读取的记录数量。</li>
+</ul>
+<p><strong>Many2many</strong> 字段有以下属性：</p>
+<ul>
+<li><strong>comodel_name</strong> ：这与<strong>One2many</strong> 字段相同。</li>
+<li><strong>relation</strong> ：设置多对多关联表表名。</li>
+<li><strong>column1</strong> ：这是链接到此模型的关联表中的<strong>Many2one</strong> 字段的名称。</li>
+<li><strong>column2</strong> ：这是链接到<strong>comodel</strong> 的关联表中的<strong>Many2one</strong> 字段的名称。</li>
+</ul>
+<p>对于<strong>Many2many</strong> 关联，在大多数情况下ORM会处理这些属性的默认值。它甚至能够检测反向Many2many关联，检测已经存在的关联表，并适当地反转column1和column2的值。</p>
+<p>但是，有两种情况我们需要介入并为这些属性提供我们自己的值：</p>
+<ul>
+<li>一种情况是我们在相同的两个模型之间需要不止一个<strong>Many2many</strong> 关系时，我们必须自己提供第二个关系的关联表名称，该名称必须与第一个关联表不同。</li>
+<li>另一种情况是相关表的数据库名称足够长，以至于自动生成的关联表名超过了<strong>PostgreSQL</strong> 数据库对象名称的<em>63</em> 个字符的限制。</li>
+</ul>
+<p>自动生成的关联表名称格式是<strong>&lt;model1&gt;_&lt;model2&gt;_rel</strong> 。但此关联表还为其创建了一个主键索引，其标识符如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">&lt;</span>model1<span class="operator">&gt;</span>_<span class="operator">&lt;</span>model2<span class="operator">&gt;</span>_rel_<span class="operator">&lt;</span>model1<span class="operator">&gt;</span>_id_<span class="operator">&lt;</span>model2<span class="operator">&gt;</span>_id_key</span><br></pre></td></tr></table></figure>
+
+<p>此主键还需要满足<em>63</em> 个字符的限制。因此，如果两个表名的字符总和超过<em>63</em> ，需要手动设置关联属性。</p>
+<h2 id="添加模型层次结构"><a href="#添加模型层次结构" class="headerlink" title="添加模型层次结构"></a>添加模型层次结构</h2><p>层次结构（<strong>Hierarchies</strong> ）表示在同一模型之间做关联。每个记录在同一模型中都有一个父记录，以及许多子记录。这可以通过简单地使用模型与其自身之间的多对一关联来实现。</p>
+<p>然而，Odoo还可通过使用<em>嵌套集模型 (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Nested_set_model">https://en.wikipedia.org/wiki/Nested_set_model</a>)</em> 为此类字段提供了更好的支持。启用后，在其域过滤器中使用<strong>child_of</strong> 运算符进行查询会发现查询速度明显的变快。</p>
+<p>继续以<strong>Library Books</strong> 为例，我们将构建一个分层类别树，可用于对图书进行分类。</p>
+<h3 id="准备工作-5"><a href="#准备工作-5" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-3"><a href="#实现步骤-3" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>我们将新建一个Python文件，<strong>models&#x2F;library_book_categ.py</strong> ，如下所示：</p>
+<ol>
+<li><p>要加载新的Python代码文件，请将以下行添加到<strong>models&#x2F;<strong>init</strong>.py</strong> 文件中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> library_book_categ</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要创建具有父子关系的<strong>Book Category</strong> 模型，请使用以下代码创建<strong>models&#x2F;library_book_categ.py</strong> 文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> models, fields, api</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BookCategory</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.book.category&#x27;</span></span><br><span class="line">    name = fields.Char(<span class="string">&#x27;Category&#x27;</span>)</span><br><span class="line">    parent_id = fields.Many2one(</span><br><span class="line">        <span class="string">&#x27;library.book.category&#x27;</span>,</span><br><span class="line">        string=<span class="string">&#x27;Parent Category&#x27;</span>,</span><br><span class="line">        ondelete=<span class="string">&#x27;restrict&#x27;</span>,</span><br><span class="line">        index=<span class="literal">True</span></span><br><span class="line">    )</span><br><span class="line">    child_ids = fields.One2many(</span><br><span class="line">        <span class="string">&#x27;library.book.category&#x27;</span>, <span class="string">&#x27;parent_id&#x27;</span>,</span><br><span class="line">        string=<span class="string">&#x27;Child Categories&#x27;</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要启用特殊的层次结构支持，还要添加以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">_parent_store = <span class="literal">True</span></span><br><span class="line">_parent_name = <span class="string">&quot;parent_id&quot;</span> <span class="comment"># optional if field is &#x27;parent_id&#x27;</span></span><br><span class="line">parent_path = fields.Char(index=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要添加防止循环关联的检查，请将以下行添加到模型中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo.exceptions <span class="keyword">import</span> ValidationError</span><br><span class="line">...</span><br><span class="line"><span class="meta">    @api.constraints(<span class="params"><span class="string">&#x27;parent_id&#x27;</span></span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_check_hierarchy</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self._check_recursion():</span><br><span class="line">            <span class="keyword">raise</span> models.ValidationError(</span><br><span class="line">                <span class="string">&#x27;Error! You cannot create recursive categories.&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>现在我们需要为一本书分配一个类别。为此，我们将向<strong>library.book</strong> 模型添加一个新的<strong>many2one</strong> 字段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">category_id = fields.Many2one(<span class="string">&#x27;library.book.category&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>最后需要升级模块使这些更改生效。</p>
+<blockquote>
+<p>要在用户界面中显示<strong>librart.book.category</strong> 模型，您需要添加菜单、视图和安全规则。 有关详细信息，请参阅第三章<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">创建Odoo附加模块</a>。 或者，您可以在<a target="_blank" rel="noopener" href="https://github.com/PacktPublishing/Odoo-13-Development-Cookbook-FourthEdition">https://github.com/PacktPublishing/Odoo-13-Development-Cookbook-FourthEdition</a>查看所有代码。</p>
+</blockquote>
+<h3 id="运行原理-5"><a href="#运行原理-5" class="headerlink" title="运行原理"></a>运行原理</h3><p>步骤1和2创建具有层次结构的新模型。<strong>Many2one</strong> 关联添加一个字段来与父记录关联。为了更快地搜索子记录，使用<strong>index&#x3D;True</strong> 参数在数据库中对该字段进行索引。<strong>parent_id</strong> 字段必须将<strong>ondelete</strong> 设置为<strong>&#39;cascade&#39;</strong> 或<strong>&#39;restrict&#39;</strong> 。 在这一点上，我们已经具备了实现层次结构所需的一切，但我们还可以做一些额外的事情来改善它。<strong>One2many</strong> 关系不会向数据库添加任何其他字段，但提供了一种快捷方式来访问以该记录的所有子记录。</p>
+<p>在第3步中，我们启用了对层次结构的特殊支持。这对于高读低写指令非常有用，因为它带来了更快的数据浏览速度，但代价是性能更低的的写操作。这是通过添加一个辅助字段<strong>parent_path</strong> 并将模型属性设置为<strong>_parent_store&#x3D;True</strong> 来实现的。启用此属性后，帮助字段将用于在分层树中的搜索中存储数据。默认情况下，假定记录的父字段名为<strong>parent_id</strong> ，但也可以使用不同的名称。在这种情况下，应使用附加模型属性<strong>_parent_name</strong> 指示正确的字段名称。 默认如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_parent_name = <span class="string">&#x27;parent_id&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>步骤4是为了防止层次结构中出现循环依赖，这意味着在升序树和降序树中都有记录。这对于在树中导航的程序来说是危险的，因为它们可能会进入无限循环。<strong>models.Model</strong> 为我们提供了一个有效的方法（<em>_check_recursion</em> ）我们在这里进行了复用。</p>
+<p>第5步是在<strong>libary.book</strong> 图书中添加类型为<strong>many2one</strong> 的<strong>category_id</strong> 字段，这样我们就可以在图书记录上设置一个类别。 这只是为了完成我们的示例。</p>
+<h3 id="扩展内容-3"><a href="#扩展内容-3" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>此处显示的技术应该用于<em>静态</em> 层次结构，这些层次结构经常被读取和查询，但更新频率较低。图书类别就是一个很好的例子，因为图书馆不会不断地创建新类别；但是，读者通常会将他们的搜索限制在一个类别及其子类别中。其原因在于数据库中嵌套集合模型的实现，每当插入、删除或移动类别时，都需要更新所有记录的<strong>parent_path</strong> 列（以及相关的数据库索引）。这可能是一项非常消耗资源的操作，尤其是在并行事务中执行多行编辑时。</p>
+<p>如果您正在处理一个非常动态的层次结构，标准的<strong>parent_id</strong> 和<strong>child_ids</strong> 关联通常会通过避免表级锁定来提高性能。</p>
+<h2 id="向模型添加约束验证"><a href="#向模型添加约束验证" class="headerlink" title="向模型添加约束验证"></a>向模型添加约束验证</h2><p>模型可以进行验证，以防止它们输入不希望的条件判断。</p>
+<p>Odoo提供两种不同类型的约束：</p>
+<ul>
+<li>数据库级别的约束检查。</li>
+<li>服务端级别的约束检查。</li>
+</ul>
+<p>数据库级别的约束仅限于<strong>PostgreSQL</strong> 支持的约束。最常用的是<strong>UNIQUE</strong> 约束，但也可以使用<strong>CHECK</strong> 和<strong>EXCLUDE</strong> 约束。 如果这些还不足以满足我们的需求，我们可以使用Python代码编写的Odoo服务端级约束。</p>
+<p>我们将使用在<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第三章</a>创建的<strong>Library Books</strong> 模型，创建Odoo附加模块，并为其添加一些约束。我们将添加一个防止重复书名的数据库约束，以及一个防止发布日期大于当前日期的Python模型约束。</p>
+<h3 id="准备工作-6"><a href="#准备工作-6" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<p>我们希望它至少包含以下内容：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> models, fields</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">	_name = <span class="string">&#x27;library.book&#x27;</span></span><br><span class="line">	name = fields.Char(<span class="string">&#x27;Title&#x27;</span>, required=<span class="literal">True</span>)</span><br><span class="line">	date_release = fields.Date(<span class="string">&#x27;Release Date&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="实现步骤-4"><a href="#实现步骤-4" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>我们将在<strong>models&#x2F;library_book.py</strong> Python文件中编辑<strong>LibraryBook</strong> 类：</p>
+<ol>
+<li><p>要创建数据库约束，请添加模型属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    _sql_constraints = [</span><br><span class="line">        (<span class="string">&#x27;name_uniq&#x27;</span>, <span class="string">&#x27;UNIQUE (name)&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;Book title must be unique.&#x27;</span>),</span><br><span class="line">        (<span class="string">&#x27;positive_page&#x27;</span>, <span class="string">&#x27;CHECK(pages&gt;0)&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;No of pages must be positive&#x27;</span>)</span><br><span class="line">    ]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要创建Python代码约束，请添加模型方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> api, models, fields</span><br><span class="line"><span class="keyword">from</span> odoo.exceptions <span class="keyword">import</span> ValidationError</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"><span class="meta">    @api.constrains(<span class="params"><span class="string">&#x27;date_release&#x27;</span></span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_check_release_date</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> record <span class="keyword">in</span> self:</span><br><span class="line">            <span class="keyword">if</span> record.date_release <span class="keyword">and</span> record.date_release &gt; fields.Date.today():</span><br><span class="line">                <span class="keyword">raise</span> models.ValidationError(<span class="string">&#x27;Release date must be in the past&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>对代码文件进行这些更改后，需要升级附加模块并重新启动服务器。</p>
+<h3 id="运行原理-6"><a href="#运行原理-6" class="headerlink" title="运行原理"></a>运行原理</h3><p>第一步在模型的表上创建一个数据库约束。 它在数据库级别强制执行。<strong>_sql_constraints</strong> 模型属性接受要创建的约束列表。每个约束由一个三元素元组定义。这些列表如下：</p>
+<ul>
+<li>用于约束标识符的后缀。在我们的示例中，我们使用了<strong>name_uniq</strong> ，生成的约束名称是<strong>library_book_name_uniq</strong> 。</li>
+<li><strong>PostgreSQL</strong> 用于更改或创建数据库表的SQL语句。</li>
+<li>违反约束时向用户报告的消息。</li>
+</ul>
+<p>在我们的示例中，我们使用了两个SQL约束。第一个是唯一的书名，第二个是检查该书的页数是否为正数。</p>
+<blockquote>
+<p><strong>警告</strong><br>如果通过模型继承向现有模型添加SQL约束，请确保没有违反约束的行。如果有这样的行，则不会添加SQL约束，并且会在日志中输出错误信息。</p>
+</blockquote>
+<p>正如我们前面提到的，也可以使用其他数据库表约束。请注意，不能以例如<strong>NOT NULL</strong> 这种方式添加列约束。有关一般<strong>PostgreSQL</strong> 约束和特别是表约束的更多信息，请查看 <a target="_blank" rel="noopener" href="http://www.postgresql.org/docs/current/static/ddlconstraints.html">http://www.postgresql.org/docs/current/static/ddlconstraints.html</a>。</p>
+<p>在第二步中，我们添加了一个方法来执行Python代码验证。这里使用了<strong>@api.constrains</strong> 修饰，这意味着当参数列表中的一个字段发生更改时，应该执行它以运行检查。如果检查失败，将会抛出<strong>ValidationError</strong> 异常。</p>
+<h3 id="扩展内容-4"><a href="#扩展内容-4" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>通常如果需要复杂的验证，可以使用<strong>@api.constrains</strong> ，但对于一些简单的情况，可以使用带有<strong>CHECK</strong> 选项的<strong>_sql_constraints</strong> 。 看看下面的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_sql_constraints = [</span><br><span class="line">	( <span class="string">&#x27;check_credit_debit&#x27;</span>,</span><br><span class="line">	<span class="string">&#x27;CHECK(credit + debit&gt;=0 AND credit * debit=0)&#x27;</span>,</span><br><span class="line">	<span class="string">&#x27;Wrong credit or debit value in accounting entry!&#x27;</span></span><br><span class="line">	)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>在前面的示例中，我们使用了<strong>CHECK</strong> 选项，并且我们正在使用<strong>AND</strong> 运算符检查同一约束中的多个条件。</p>
+<h2 id="向模型添加计算字段"><a href="#向模型添加计算字段" class="headerlink" title="向模型添加计算字段"></a>向模型添加计算字段</h2><p>有时我们需要一个字段，该字段的值是从同一记录或相关记录中的其他字段计算或派生的。一个典型的例子是总金额，它是通过将单价乘以数量来计算的。在Odoo模型中，这可以使用计算字段来实现。</p>
+<p>为了向您展示计算字段的工作原理，我们将在<strong>Library Books</strong> 模型中添加一个来计算自图书发行日期以来的天数。</p>
+<p>还可以使计算字段可编辑和可搜索。 这也将在我们的示例中实现这一点。</p>
+<h3 id="准备工作-7"><a href="#准备工作-7" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-5"><a href="#实现步骤-5" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>我们将编辑<strong>models&#x2F;library_book.py</strong> 代码文件以添加一个新字段和支持其逻辑的方法：</p>
+<ol>
+<li><p>首先将新字段添加到<strong>Library Books</strong> 模型：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    age_days = fields.Float(</span><br><span class="line">        string=<span class="string">&#x27;Days Since Release&#x27;</span>,</span><br><span class="line">        compute=<span class="string">&#x27;_compute_age&#x27;</span>,</span><br><span class="line">        inverse=<span class="string">&#x27;_inverse_age&#x27;</span>,</span><br><span class="line">        search=<span class="string">&#x27;_search_age&#x27;</span>,</span><br><span class="line">        store=<span class="literal">False</span>, <span class="comment"># optional</span></span><br><span class="line">        compute_sudo=<span class="literal">True</span> <span class="comment"># optional</span></span><br><span class="line">    )  </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接下来，添加具有值计算逻辑的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> api <span class="comment"># if not already imported</span></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"><span class="meta">    @api.depends(<span class="params"><span class="string">&#x27;date_release&#x27;</span></span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_compute_age</span>(<span class="params">self</span>):</span><br><span class="line">        today = fields.Date.today()</span><br><span class="line">        <span class="keyword">for</span> book <span class="keyword">in</span> self:</span><br><span class="line">            <span class="keyword">if</span> book.date_release:</span><br><span class="line">                delta = today - book.date_release</span><br><span class="line">                book.age_days = delta.days</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                book.age_days = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要添加方法并实现写入计算字段的逻辑，请使用以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_inverse_age</span>(<span class="params">self</span>):</span><br><span class="line">    today = fields.Date.today()</span><br><span class="line">    <span class="keyword">for</span> book <span class="keyword">in</span> self.filtered(<span class="string">&#x27;date_release&#x27;</span>):</span><br><span class="line">        d = today - timedelta(days=book.age_days)</span><br><span class="line">        book.date_release = d   </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要实现允许您在计算字段可搜索的逻辑，请使用以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_search_age</span>(<span class="params">self, operator, value</span>):</span><br><span class="line">        today = fields.Date.today()</span><br><span class="line">        value_days = timedelta(days=value)</span><br><span class="line">        value_date = today - value_days</span><br><span class="line">        <span class="comment"># convert the operator:</span></span><br><span class="line">        <span class="comment"># book with age &gt; value have a date &lt; value_date</span></span><br><span class="line">        operator_map = &#123;</span><br><span class="line">            <span class="string">&#x27;&gt;&#x27;</span>: <span class="string">&#x27;&lt;&#x27;</span>, <span class="string">&#x27;&gt;=&#x27;</span>: <span class="string">&#x27;&lt;=&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;&lt;&#x27;</span>: <span class="string">&#x27;&gt;&#x27;</span>, <span class="string">&#x27;&lt;=&#x27;</span>: <span class="string">&#x27;&gt;=&#x27;</span>,</span><br><span class="line">        &#125;</span><br><span class="line">        new_op = operator_map.get(operator, operator)</span><br><span class="line">        <span class="keyword">return</span> [(<span class="string">&#x27;date_release&#x27;</span>, new_op, value_date)]</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>需要重新启动Odoo，然后升级模块，才能正确激活这些新增功能。</p>
+<h3 id="运行原理-7"><a href="#运行原理-7" class="headerlink" title="运行原理"></a>运行原理</h3><p>计算字段的定义与常规字段的定义相同，只是添加了一个<strong>compute</strong> 属性来指定用于其计算的方法的名称。</p>
+<p>它们的相似性可能具有欺骗性，因为计算域在内部与常规域完全不同。计算字段是在运行时动态计算的，因此它们不会存储在数据库中，因此默认情况下您无法搜索或写入计算字段。您需要做一些额外的工作才能启用对计算字段的写入和搜索支持。让我们看看怎么做。</p>
+<p>计算函数是在运行时动态计算的，但是ORM使用缓存来避免每次访问其值时重新计算它而造成性能低下。 所以它需要知道它依赖于哪些字段。使用<strong>@depends</strong> 装饰器来检测其缓存值何时应失效并重新计算。</p>
+<p>确保<strong>compute</strong> 函数始终在计算字段上设置一个值。否则将引发错误。当您的代码中有<strong>if</strong> 条件且无法在计算字段上设置值时，可能会发生这种情况。这可能很难进行调试。</p>
+<p>可以通过实现反函数（<strong>inverse</strong> ）来添加写支持。使用分配给计算字段的值来更新源字段。当然这只对简单的计算有用。尽管如此，仍然存在一些有用的情况。在我们的示例中，我们可以通过编辑自发行以来的天数计算字段来设置图书发行日期。<strong>inverse</strong> 属性是可选的；如果您不想使计算字段可编辑，则可以跳过它。</p>
+<p>也可以通过设置<strong>search</strong> 属性为方法名称来使非存储计算字段也可搜索（类似于<strong>compute</strong> 和<strong>inverse</strong> ）。 和<strong>inverse</strong> 属性一样，<strong>search</strong> 属性也是可选的；如果您不想让计算字段可搜索，您可以跳过它。</p>
+<p>但是这种方法预计不会实现在实际的搜索中。相反，它接收用于在字段上搜索的运算符和值作为参数，并期望返回一个具有替换搜索条件的域以供使用。在我们的示例中，我们将对<em>发布以来的天数</em> 字段的搜索转换为<em>发布日期</em> 字段上的等效搜索条件。</p>
+<p>可选的<strong>store&#x3D;True</strong> 标志将字段存储在数据库中。在这种情况下，在计算之后字段值将存储在数据库中，然后以与常规字段相同的方式检索它们，而不是在运行时重新计算。 由于<strong>@api.depends</strong> 装饰器，ORM将知道何时需要重新计算和更新这些存储的值。您可以将其视为持久缓存。它还具有使该字段可用于搜索条件的优点，包括按操作排序和分组。如果在计算字段中使用<strong>store&#x3D;True</strong> ，则不再需要实现<strong>search</strong> 方法，因为该字段存储在数据库中，您可以根据存储的字段进行搜索或排序。</p>
+<p>在需要以提升的权限完成计算的情况下，使用<strong>compute_sudo&#x3D;True</strong> 标志来实现。在当计算需要使用最终用户可能无法访问的字段数据时，可使用这种方法实现。</p>
+<blockquote>
+<p><strong>重要提示</strong><br>在Odoo v13中更改了<strong>compute_sudo</strong> 的默认值。在Odoo v13之前，<strong>compute_sudo</strong> 的值为<strong>False</strong> 。 但在v13中，<strong>compute_sudo</strong> 的默认值将基于<strong>store</strong> 属性。 如果<strong>store</strong> 属性的值为<strong>True</strong> ，则<strong>compute_sudo</strong> 为<strong>True</strong> 否则为<strong>False</strong> 。但是您始终可以通过在字段定义中显式放置<strong>compute_sudo</strong> 来手动更改它。</p>
+</blockquote>
+<h3 id="扩展内容-5"><a href="#扩展内容-5" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>Odoo v13为ORM引入了一种新的缓存机制。早期版本中，缓存是基于环境的，但现在在Odoo v13中，我们有一个全局缓存。因此，如果您有一个依赖于上下文值的计算字段，那么您有时可能会得到不正确的值。要解决此问题，您需要使用<strong>@api.depends_context</strong> 装饰器。 请参考以下示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api.depends(<span class="params"><span class="string">&#x27;price&#x27;</span></span>)</span></span><br><span class="line"><span class="meta">@api.depends_context(<span class="params"><span class="string">&#x27;company_id&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_compute_value</span>(<span class="params">self</span>):</span><br><span class="line">	company_id = self.env.context.get(<span class="string">&#x27;company_id&#x27;</span>)</span><br><span class="line">	...</span><br><span class="line">	<span class="comment"># other computation</span></span><br></pre></td></tr></table></figure>
+
+<p>您可以在上面的示例中看到，我们的计算使用上下文中的<strong>company_id</strong> 。通过在<strong>depends_context</strong> 装饰器中使用<strong>company_id</strong> ，我们可以确保字段值将根据上下文中<strong>company_id</strong> 的值重新计算。</p>
+<h2 id="暴露存储在其他模型中的相关字段"><a href="#暴露存储在其他模型中的相关字段" class="headerlink" title="暴露存储在其他模型中的相关字段"></a>暴露存储在其他模型中的相关字段</h2><p>从服务器读取数据时，Odoo客户端只能获取模型中可用和正在查询的字段的值。与服务器端代码不同，客户端代码不能使用点表示法访问相关表中的数据。</p>
+<p>但是这些字段可通过将它们添加为关联字段来进行访问。我们将这样做以使出版商所在的城市在<strong>Library Books</strong> 模型中可用。</p>
+<h3 id="准备工作-8"><a href="#准备工作-8" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-6"><a href="#实现步骤-6" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>编辑<strong>models&#x2F;library_book.py</strong> 文件以添加新的相关字段：</p>
+<ol>
+<li><p>确保我们有图书出版商的字段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line">    publisher_id = fields.Many2one(<span class="string">&#x27;res.partner&#x27;</span>, string=<span class="string">&#x27;Publisher&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>现在，添加发布者所在城市的相关字段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># class LibraryBook(models.Model):</span></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line">    publisher_city = fields.Char(</span><br><span class="line">        <span class="string">&#x27;Publisher City&#x27;</span>,</span><br><span class="line">        related=<span class="string">&#x27;publisher_id.city&#x27;</span>,</span><br><span class="line">        readonly=<span class="literal">True</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>最后，我们需要升级附加模块以使新字段在模型中可用。</p>
+<h3 id="运行原理-8"><a href="#运行原理-8" class="headerlink" title="运行原理"></a>运行原理</h3><p>关联字段就像常规字段一样，但它们有一个附加属性<strong>related</strong> ，带有一个分隔字段链遍历的字符串。</p>
+<p>在我们的例子中，我们通过<strong>publisher_id</strong> 访问与发布者相关的记录，然后读取它的<strong>city</strong> 字段。我们还可以有更长的链，例如<strong>publisher_id.country_id.country_code</strong> 。</p>
+<p>请注意在本例中，我们将相关字段设置为<strong>只读</strong> 。如果我们不这样做，该字段将是可写的，并且用户可能会更改其值。这将具有更改相关发布者的城市字段值的效果。虽然这可能是一个有用的副作用，但需要谨慎。由同一出版商出版的所有书籍都将更新其<strong>publisher_city</strong> 字段，这可能不是用户期望的。</p>
+<h3 id="扩展内容-6"><a href="#扩展内容-6" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>关联字段实际上是计算字段。它们只是提供了一种方便的快捷语法来从相关模型中读取字段值。作为一个计算域，这意味着<strong>store</strong> 属性也是可用的。作为一种快捷方式，它们还具有引用字段的所有属性，例如<strong>name</strong> 、<strong>translatable</strong> 。</p>
+<p>此外，它们支持类似于<strong>compute_sudo</strong> 的<strong>related_sudo</strong> 标志；当设置为<strong>True</strong> 时，遍历时不检查用户的访问权限。</p>
+<p>在<strong>create()</strong> 方法中使用关联字段可能会影响性能，因为这些字段的计算会延迟到它们的创建结束。因此，如果您有一个<strong>One2many</strong> 关联，例如在<strong>sale.order</strong> 和<strong>sale.order.line</strong> 模型中，并且您在line模型上有一个关联字段引用了order模型上的字段，应当在记录创建时在order模型中显式读取该字段，而不是使用关联字段快捷方式，尤其是在有很多行的情况下。</p>
+<h2 id="使用引用字段添加动态关联"><a href="#使用引用字段添加动态关联" class="headerlink" title="使用引用字段添加动态关联"></a>使用引用字段添加动态关联</h2><p>对于关联字段，我们需要事先确定关联的目标模型（或comodel）。但是，有时我们可能需要将决定权留给用户，首先选择我们想要的模型，然后选择我们想要链接到的记录。</p>
+<p>在Odoo中可以使用引用字段来实现。</p>
+<h3 id="准备工作-9"><a href="#准备工作-9" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-7"><a href="#实现步骤-7" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>编辑<strong>models&#x2F;library_book.py</strong> 文件以添加新的相关字段：</p>
+<ol>
+<li><p>首先，我们需要添加一个辅助方法来动态构建可选择目标模型的列表：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> models, fields, api</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"><span class="meta">    @api.model</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_referencable_models</span>(<span class="params">self</span>):</span><br><span class="line">        models = self.env[<span class="string">&#x27;ir.model&#x27;</span>].search([</span><br><span class="line">            (<span class="string">&#x27;field_id.name&#x27;</span>, <span class="string">&#x27;=&#x27;</span>, <span class="string">&#x27;message_ids&#x27;</span>)])</span><br><span class="line">        <span class="keyword">return</span> [(x.model, x.name) <span class="keyword">for</span> x <span class="keyword">in</span> models]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后，我们需要添加引用字段并使用前面的函数提供可选模型列表：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ref_doc_id = fields.Reference(</span><br><span class="line">    selection=<span class="string">&#x27;_referencable_models&#x27;</span>,</span><br><span class="line">    string=<span class="string">&#x27;Reference Document&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>由于我们正在更改模型的结构，因此需要升级模块来激活这些更改。</p>
+<h3 id="运行原理-9"><a href="#运行原理-9" class="headerlink" title="运行原理"></a>运行原理</h3><p>引用字段类似于多对一字段，不同之处在于它们允许用户选择要链接到的模型。</p>
+<p>可以从<strong>selection</strong> 属性提供的列表中选择目标模型。<strong>selection</strong> 属性必须是两个元素元组的列表，其中第一个是模型的内部标识符，第二个是它的文本描述。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[(<span class="string">&#x27;res.users&#x27;</span>, <span class="string">&#x27;User&#x27;</span>), (<span class="string">&#x27;res.partner&#x27;</span>, <span class="string">&#x27;Partner&#x27;</span>)]</span><br></pre></td></tr></table></figure>
+
+<p>但是，我们可以使用最常见的模型，而不是提供固定列表。为简单起见，我们使用所有具有消息传递功能的模型。使用<strong>_referencable_models</strong> 方法动态组装模型列表。</p>
+<p>上例中，我们首先提供了一个函数来浏览所有可以引用的模型记录，以动态构建<strong>selection</strong> 属性。虽然这两种形式都允许，但是我们在引号内声明了函数名，而不是直接引用不带引号的函数。这样更灵活，它允许引用的函数只在代码的后面定义，而使用直接引用时这是不可以的。</p>
+<p>该函数需要<strong>@api.model</strong> 装饰器，因为它在模型级别上运行，而不是在记录集级别上运行。</p>
+<p>虽然此功能看起来不错，但它带来了明显的性能开销。显示大量记录的引用字段（例如，在列表视图中）可能会产生繁重的数据库负载，因为必须在单独的查询中查找每个值。与常规关系字段不同，它也无法利用数据库引用完整性。</p>
+<h2 id="使用继承向模型添加功能"><a href="#使用继承向模型添加功能" class="headerlink" title="使用继承向模型添加功能"></a>使用继承向模型添加功能</h2><p>Odoo最重要的特性之一是模块插件能够在其他模块插件的基础上扩展功能，而无需编辑原始功能的代码。这可能是添加字段或方法、修改现有字段或扩展现有方法以执行附加逻辑。</p>
+<p>根据官方文档，Odoo提供了三种继承方式：</p>
+<ul>
+<li>类继承（扩展）</li>
+<li>原型继承</li>
+<li>代理继承</li>
+</ul>
+<p>我们将在单独的小节中介绍每一种继承方式。在本小节中我们将介绍类继承（扩展）。它用于向现有模型添加新字段或方法。</p>
+<p>我们将扩展Odoo内置的合作伙伴模型<strong>res.partner</strong> 为其添加<em>创作书籍数量</em> 的计算字段。这涉及向现有模型添加字段和方法。</p>
+<h3 id="准备工作-10"><a href="#准备工作-10" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-8"><a href="#实现步骤-8" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>我们将扩展Odoo内置的合作伙伴模型。如果你还记得的话，我们已经在本章的<em>向模型添加关联字段</em> 中继承了<strong>res.parnter</strong> 模型。为了使解释尽可能简单，我们将在<strong>models&#x2F;library_book.py</strong> 代码文件中重用<strong>res.partner</strong> 模型：</p>
+<ol>
+<li><p>首先我们要确保在partner模型中存在<strong>authored_book_ids</strong> 反向关联，并添加计算域：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ResPartner</span>(models.Model):</span><br><span class="line">    _inherit = <span class="string">&#x27;res.partner&#x27;</span></span><br><span class="line">    _order = <span class="string">&#x27;name&#x27;</span></span><br><span class="line">    authored_book_ids = fields.Many2many(</span><br><span class="line">        <span class="string">&#x27;library.book&#x27;</span>, string=<span class="string">&#x27;Authored Books&#x27;</span>)</span><br><span class="line">    count_books = fields.Integer( <span class="string">&#x27;Number of Authored Books&#x27;</span>,</span><br><span class="line">        compute=<span class="string">&#x27;_compute_count_books&#x27;</span> )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接下来添加计算图书数量所需的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> api <span class="comment"># if not already imported</span></span><br><span class="line"><span class="comment"># class ResPartner(models.Model):</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"><span class="meta">    @api.depends(<span class="params"><span class="string">&#x27;authored_book_ids&#x27;</span></span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_compute_count_books</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> r <span class="keyword">in</span> self:</span><br><span class="line">            r.count_books = <span class="built_in">len</span>(r.authored_book_ids)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>最后我们需要升级附加模块才能使修改生效。</p>
+<h3 id="运行原理-10"><a href="#运行原理-10" class="headerlink" title="运行原理"></a>运行原理</h3><p>当使用<strong>_inherit</strong> 属性定义模型类时，它会向继承的模型添加修改，而不是替换它。</p>
+<p>这意味着继承类中定义的字段在父模型上添加或更改。在数据库层，ORM将字段添加到同一个数据库表中。</p>
+<p>字段也被增量修改。这意味着如果该字段已经存在于父类中，则只修改继承类中声明的属性；其他属性保持在父类中。</p>
+<p>继承类中定义的方法替换父类中的方法。如果你不使用<strong>super</strong> 调用调用父方法，在这种情况下，父类中的方法将不会被执行，我们将失去父类中的功能。因此，每当您通过继承现有方法添加新逻辑时，您应该包含一个带有<strong>super</strong> 的语句以调用父类中的功能。这在<em>第五章《基本服务器端开发》</em> 中有更详细的讨论。</p>
+<blockquote>
+<p>本小节将向现有模型添加新字段。如果您还想将这些新字段添加到现有视图（用户界面），请参阅<em>第九章《后端视图中的更改现有视图-视图继承》</em> 。</p>
+</blockquote>
+<h2 id="使用继承复制模型定义"><a href="#使用继承复制模型定义" class="headerlink" title="使用继承复制模型定义"></a>使用继承复制模型定义</h2><p>我们已经在前一节中看到了类继承（扩展）。现在我们将看到原型继承，它用于复制现有模型的整个定义。在本节中，我们将复制<strong>library.book</strong> 模型。</p>
+<h3 id="准备工作-11"><a href="#准备工作-11" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-9"><a href="#实现步骤-9" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>原型继承是通过同时使用<strong>_name</strong> 和<strong>_inherit</strong> 类属性来执行的。执行以下步骤以生成<strong>library.book</strong> 模型的副本：</p>
+<ol>
+<li><p>将名为<strong>library_book_copy.py</strong> 的新文件添加到<strong>/my_library/models/</strong> 目录。</p>
+</li>
+<li><p>将以下内容添加到<strong>library_book_copy.py</strong> 文件中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> odoo <span class="keyword">import</span> models, fields, api</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBookCopy</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&quot;library.book.copy&quot;</span></span><br><span class="line">    _inherit = <span class="string">&quot;library.book&quot;</span></span><br><span class="line">    _description = <span class="string">&quot;Library Book&#x27;s Copy&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将新文件引用导入<strong>/my_library/models/__init__.py</strong> 文件。更改后您的<strong>__init__.py</strong> 文件将如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> library_book</span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> library_book_categ</span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> library_book_copy</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>最后，我们需要升级附加模块才能使修改生效。进入<strong>Settings | Technical |<br>Database Structure | Models</strong> 菜单检查新模型的定义，您将在此处看到<strong>library.book.copy</strong> 模型的新条目。</p>
+<blockquote>
+<p><strong>提示</strong><br>为了查看新模型的菜单和视图，您需要添加视图和菜单的XML定义。要了解有关视图和菜单的更多信息，请参阅请参阅<a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%9B%E5%BB%BAOdoo%E9%99%84%E5%8A%A0%E6%A8%A1%E5%9D%97%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">第三章</a><em>创建Odoo附加模块</em> 中的添加菜单项和视图。</p>
+</blockquote>
+<h3 id="运行原理-11"><a href="#运行原理-11" class="headerlink" title="运行原理"></a>运行原理</h3><p>通过同时使用<strong>_name</strong> 和<strong>_inherit</strong> 类属性，您可以复制模型的定义。当您在模型中使用这两个属性时，Odoo将复制<strong>_inherit</strong> 的模型定义并使用<strong>_name</strong> 属性创建一个新模型。</p>
+<p>在我们的示例中，Odoo将复制<strong>library.book</strong> 模型的定义并创建一个新模型<strong>library.book.copy</strong> 。新的<strong>library.book.copy</strong> 模型有自己的数据库表，其数据完全独立于<strong>library.book</strong> 父模型。由于它仍然继承自partner模型，因此对它的任何后续修改也会影响新模型。</p>
+<p>原型继承复制父类的所有属性。它复制字段、属性和方法。如果要在子类中修改它们，只需向子类添加新定义即可。例如，<strong>library.book</strong> 模型具有<strong>_name_get</strong> 方法。如果要在子类中使用不同的<strong>_name_get</strong> 逻辑，需要重新定义<strong>library.book.copy</strong> 模型中的<strong>_name_get</strong> 方法。</p>
+<blockquote>
+<p><strong>警告</strong><br>如果您在<strong>_inherit</strong> 和<strong>_name</strong> 属性中使用相同的模型名称，则原型继承不起作用。如果您确实在<strong>_inherit</strong> 和<strong>_name</strong> 属性中使用了相同的模型名称，那么它的行为就像普通的扩展继承一样。</p>
+</blockquote>
+<h3 id="扩展内容-7"><a href="#扩展内容-7" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>在官方文档中，这称为原型继承，但在实践中很少使用。这样做的原因是代理继承通常以更有效的方式满足这一需求，而无需复制数据结构。有关这方面的更多信息，您可以参考下一小节<em>使用代理继承将功能复制至另一个模型</em> 。</p>
+<h2 id="使用代理继承将功能复制至另一个模型"><a href="#使用代理继承将功能复制至另一个模型" class="headerlink" title="使用代理继承将功能复制至另一个模型"></a>使用代理继承将功能复制至另一个模型</h2><p>第三种继承是委托继承。它使用<strong>_inherits</strong> 类属性而不是<strong>_inherit</strong> 。在某些情况下，我们不想修改现有模型，而是希望基于现有模型创建一个新模型以使用它已有的功能。我们可以使用原型继承来复制模型的定义，但这会产生重复的数据结构。如果您想复制模型的定义而不复制数据结构，那么可以使用委托继承，它使用<strong>_inherits</strong> 模型属性（注意附加的<strong>s</strong> ）。</p>
+<p>传统的继承与面向对象编程中的概念有很大不同。反过来，委托继承也是类似的，因为可以创建一个新模型来包含父模型的特征。它还支持多态继承，我们从两个或多个其他模型继承。</p>
+<p>我们图书馆中已经有书了。是时候给图书馆添加会员了。对于图书馆会员，我们需要在partner模型中找到的所有身份和地址数据，并且我们还希望它还能记录一些与会员资格相关的信息：开始日期、终止日期和卡号。</p>
+<p>将这些字段添加到partner模型不是最佳解决方案，因为这些字段对于非会员是不需要的。我们需要将partner模型扩展到具有这些附加字段的新模型。</p>
+<h3 id="准备工作-12"><a href="#准备工作-12" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-10"><a href="#实现步骤-10" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>新的图书馆会员模型应该在它自己的Python代码文件中，但为了使解释尽可能简单，我们将重用<strong>models/library_book.py</strong> 文件：</p>
+<ol>
+<li><p>添加新的模型，继承自<strong>res.partner</strong> 模型:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryMember</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.member&#x27;</span></span><br><span class="line">    _inherits = &#123;<span class="string">&#x27;res.partner&#x27;</span>: <span class="string">&#x27;parent_id&#x27;</span>&#125;</span><br><span class="line">    partner_id = fields.Many2one(</span><br><span class="line">        <span class="string">&#x27;res.partner&#x27;</span>,</span><br><span class="line">        ondelete=<span class="string">&#x27;cascade&#x27;</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接着我们添加会员的其他特殊字段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># class LibraryMenber(models.Model):</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    date_start = fields.Date(<span class="string">&#x27;Member Since&#x27;</span>)</span><br><span class="line">    date_end = fields.Date(<span class="string">&#x27;Termination Date&#x27;</span>)</span><br><span class="line">    member_number = fields.Char()</span><br><span class="line">    date_of_birth = fields.Date(<span class="string">&#x27;Date of birth&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>现在我们需要升级附加模块才能使修改生效。</p>
+<h3 id="运行原理-12"><a href="#运行原理-12" class="headerlink" title="运行原理"></a>运行原理</h3><p><strong>_inherits</strong> 模型属性填的是我们需要继承的父模型。在这种情况下，我们的示例中只有一个<strong>res.partner</strong> 。它的值是一个<strong>键值字典</strong>，其中键是继承的模型，值是用于链接到它们的字段名称。我们还必须在模型中定义的<strong>Many2one</strong> 字段。在我们的示例中，<strong>partner_id</strong> 是用于与<strong>Partner</strong> 父模型链接的字段。</p>
+<p>为了更好的理解它的运行原理，让我们从数据库层面看看，当新建一个图书馆会员时它做了什么动作：</p>
+<ul>
+<li>在<strong>res_partner</strong> 表新增了一条记录。</li>
+<li>在<strong>library_member</strong> 表新增了一条记录。</li>
+<li><strong>library_member</strong> 表中的<strong>partner_id</strong> 字段存储的是<strong>res_partner</strong> 表记录的ID。</li>
+</ul>
+<p>会员记录会自动链接到新的partner记录。这只是一个多对一的关系，但代理机制增加了一些魔力，使partner的字段可以在会员记录中使用，并且新的partner记录也会自动与新会员记录一起创建。</p>
+<p>您可能想知道这个自动创建的partner记录并没有什么特别之处。它是一个普通的partner，如果您浏览partner模型，您将能够找到该记录（当然没有额外的会员特殊字段数据）。所有会员都是partner，但只有部分partner也是会员。</p>
+<p>那么如果您删除了partner记录那会员记录会发生什么？您可以通过选择关系字段的<strong>ondelete</strong> 值来决定。对于<strong>partner_id</strong> ，我们使用了<strong>cascade</strong> 。这意味着当partner删除时相关的会员记录也会删除。我们本可以使用更保守的<strong>restrict</strong> 来禁止删除具有链接到会员的partner记录。在这种情况下，只有删除该会员才有效。</p>
+<blockquote>
+<p>请务必注意，代理继承仅适用于字段继承，不适用于方法继承。因此如果partner模型有一个<strong>do_something()</strong> 方法，会员模型将不会自动继承它。</p>
+</blockquote>
+<h3 id="扩展内容-8"><a href="#扩展内容-8" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>代理继承有一个捷径，您可以在<strong>Many2one</strong> 字段定义中使用<strong>delegate&#x3D;True</strong> 属性，而不是创建<strong>_inherits</strong> 字典。 这样做与使用<strong>_inherits</strong> 选项效果完全相同。主要优点是这样写更简单。在给定的示例中，我们执行了与前一个相同的继承委托，但在这种情况下，我们没有创建<strong>_inherits</strong> 字典，而是在<strong>partner_id</strong> 字段中使用了<strong>delegate&#x3D;True</strong> 选项：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryMember</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.member&#x27;</span></span><br><span class="line">    partner_id = fields.Meny2one(<span class="string">&#x27;res.partner&#x27;</span>, ondelete=<span class="string">&#x27;cascade&#x27;</span>, delegate=<span class="literal">True</span>)</span><br><span class="line">    date_start = fields.Date(<span class="string">&#x27;Member Since&#x27;</span>)</span><br><span class="line">    date_end = fields.Date(<span class="string">&#x27;Termination Date&#x27;</span>)</span><br><span class="line">    member_mumber = fields.Char()</span><br><span class="line">    date_of_birth = fields.Date(<span class="string">&#x27;Date of birth&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>一个值得注意的代理继承案例是用户模型<strong>res.users</strong> 。它继承自partner模型 (<strong>res.partner</strong> )。 这意味着您可以在用户上看到的某些字段实际上存储在partner模型中（特别是名称字段）。创建新用户时，我们还会获得一个自动创建的新partner。</p>
+<p>我们还应该提到，使用<strong>_inherit</strong> 的传统继承也可以将功能复制到新模型中，尽管效率较低。这在<a href="#%E4%BD%BF%E7%94%A8%E7%BB%A7%E6%89%BF%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E5%8A%9F%E8%83%BD">使用继承向模型添加功能</a>中进行了讨论。</p>
+<h2 id="使用抽象模型实现可复用的模型功能"><a href="#使用抽象模型实现可复用的模型功能" class="headerlink" title="使用抽象模型实现可复用的模型功能"></a>使用抽象模型实现可复用的模型功能</h2><p>有时我们希望能够将某个特定功能添加到几个不同的模型中。在不同的文件中重复相同的代码是一种不好的编程习惯；最好实现一次并重用它。</p>
+<p>抽象模型允许我们创建一个通用模型，该模型实现了一些可以被常规模型继承的特性，以使该特性可用。</p>
+<p>例如我们需要实现一个简单的存档功能。它将活动字段添加到模型中（如果它不存在）并提供存档方法来切换活动标志。这是有效的，因为<strong>active</strong> 是一个魔法字段。如果默认在模型中出现，<strong>active&#x3D;False</strong> 的记录会在查询中被过滤掉。</p>
+<p>然后我们将它添加到<strong>Library Books</strong> 模型中。</p>
+<h3 id="准备工作-13"><a href="#准备工作-13" class="headerlink" title="准备工作"></a>准备工作</h3><p>我们将继续使用上一小节中的<strong>my_library</strong> 附加模块。</p>
+<h3 id="实现步骤-11"><a href="#实现步骤-11" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>本节中我们需要添加存档功能到Library Books模型中。为了使解释尽可能简单，我们将把它塞进<strong>models&#x2F;library_book.py</strong> 文件中：</p>
+<ol>
+<li><p>为存档功能添加抽象模型。 它必须在<strong>Library Book</strong> 模型中定义，将在其中使用它：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BaseArchive</span>(models.AbstractModel):</span><br><span class="line">    _name = <span class="string">&#x27;base.archive&#x27;</span></span><br><span class="line">    active = fields.Boolean(default=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">do_archive</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> record <span class="keyword">in</span> self:</span><br><span class="line">            record.active = <span class="keyword">not</span> record.active</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接着我们将编辑<strong>Library Book</strong> 模型以继承上一步的抽象模型：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LibraryBook</span>(models.Model):</span><br><span class="line">    _name = <span class="string">&#x27;library.book&#x27;</span></span><br><span class="line">    _inherit = [<span class="string">&#x27;base.archive&#x27;</span>]</span><br><span class="line">    <span class="comment"># ...</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>需要升级附加模块才能激活更改。</p>
+<h3 id="运行原理-13"><a href="#运行原理-13" class="headerlink" title="运行原理"></a>运行原理</h3><p>抽象模型基于<strong>models.AbstractModel</strong> 类，而不是通常的<strong>models.Model</strong> 。它具有常规模型的所有属性和功能；不同之处在于ORM不会在数据库中为其创建实际的表。这意味着它不能存储任何数据。它仅用作要添加到常规模型中的可重用功能的模板。</p>
+<p>我们的存档抽象模型非常简单。它只是添加了活动字段和一个方法来切换活动标志的值，我们希望稍后通过用户界面上的按钮使用它。</p>
+<p>当使用<strong>_inherit</strong> 属性定义模型类时，它会继承那些类的属性方法，并且在当前类中定义的属性方法会对这些继承的特性进行修改。</p>
+<p>这里起作用的机制与常规模型扩展的机制相同（根据<a href="#%E4%BD%BF%E7%94%A8%E7%BB%A7%E6%89%BF%E5%90%91%E6%A8%A1%E5%9E%8B%E6%B7%BB%E5%8A%A0%E5%8A%9F%E8%83%BD">使用继承向模型添加功能</a>）。 您可能已经注意到<strong>_inherit</strong> 使用模型标识符列表而不是具有一个模型标识符的字符串。事实上，<strong>_inherit</strong> 可以有两种形式。使用列表形式允许我们从多个（通常是抽象的）类继承。在这种情况下，我们只继承一个，所以一个文本字符串就可以了。为了说明的目的，使用了一个列表。</p>
+<h3 id="扩展内容-9"><a href="#扩展内容-9" class="headerlink" title="扩展内容"></a>扩展内容</h3><p>一个值得注意的内置抽象模型是<strong>mail.thread</strong> ，它由<strong>mail (Discuss)</strong> 附加模块提供。在模型上，它启用了为在许多表单底部看到的消息墙提供动力的讨论功能。</p>
+<p>除了<strong>AbstractModel</strong> 之外，还有第三种模型类型可用：<strong>models.TransientModel</strong> 。这有一个类似<strong>models.Model</strong> 的数据库表示，但是在那里创建的记录应该是临时的，并且由服务器计划的作业定期清除。除此之外，瞬态模型就像常规模型一样工作。</p>
+<p><strong>models.TransientModel</strong> 对于更复杂的用户交互（称为向导）很有用。该向导用于请求用户输入。在第八 章《高级服务器端开发技术》中，我们再探讨如何使用这些技术进行高级用户交互。</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>Odoo14开发者指南第四章-应用模型【翻译】</p><p><a href="https://www.junle.org/Odoo14开发者指南第四章-应用模型【翻译】/">https://www.junle.org/Odoo14开发者指南第四章-应用模型【翻译】/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Junle</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2022-06-08</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2024-03-22</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Odoo%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97/">Odoo开发者指南</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/static/donate_wechat.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Odoo14开发者指南第五章-基本服务端开发【翻译】</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/%E5%A6%82%E4%BD%95%E5%9C%A8Ubuntu20-04%E9%83%A8%E7%BD%B2Metabase/"><span class="level-item">如何在Ubuntu20.04部署Metabase</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://www.junle.org/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/';
+            this.page.identifier = 'Odoo14开发者指南第四章-应用模型【翻译】/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'junles-blog' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/static/avatar.jpg" alt="Junle"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Junle</p><p class="is-size-6 is-block">elnujuw</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Guangdong (CN)</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">58</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">24</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/elnujuw" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/elnujuw"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="/static/email.png"><i class="fas fa-at"></i></a></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-03-22T07:56:01.000Z">2024-03-22</time></p><p class="title"><a href="/RuoYi%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E4%B8%8ESQLServer%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E7%BE%8E%E6%90%AD%E9%85%8D/">RuoYi系统如何与SQLServer数据库完美搭配</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-07-24T05:34:39.000Z">2023-07-24</time></p><p class="title"><a href="/%E6%8E%92%E6%9F%A5SQL-Server%E4%B8%AD%E8%BF%90%E8%A1%8C%E7%BC%93%E6%85%A2%E7%9A%84%E6%9F%A5%E8%AF%A2%E9%97%AE%E9%A2%98/">排查SQL Server中运行缓慢的查询问题</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-12-01T01:35:51.000Z">2022-12-01</time></p><p class="title"><a href="/Print-Spooler-%E6%9C%8D%E5%8A%A1%E6%84%8F%E5%A4%96%E7%BB%88%E6%AD%A2/">Print Spooler 服务意外终止</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-06-16T02:01:36.000Z">2022-06-16</time></p><p class="title"><a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E5%85%AD%E7%AB%A0-%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9D%97%E6%95%B0%E6%8D%AE%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">Odoo14开发者指南第六章-管理模块数据【翻译】</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-06-14T01:14:57.000Z">2022-06-14</time></p><p class="title"><a href="/Odoo14%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">Odoo14开发者指南第五章-基本服务端开发【翻译】</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2024/03/"><span class="level-start"><span class="level-item">三月 2024</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2023/07/"><span class="level-start"><span class="level-item">七月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/12/"><span class="level-start"><span class="level-item">十二月 2022</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/05/"><span class="level-start"><span class="level-item">五月 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">三月 2022</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/12/"><span class="level-start"><span class="level-item">十二月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/08/"><span class="level-start"><span class="level-item">八月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/04/"><span class="level-start"><span class="level-item">四月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/03/"><span class="level-start"><span class="level-item">三月 2021</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/10/"><span class="level-start"><span class="level-item">十月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/08/"><span class="level-start"><span class="level-item">八月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/06/"><span class="level-start"><span class="level-item">六月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/05/"><span class="level-start"><span class="level-item">五月 2020</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/04/"><span class="level-start"><span class="level-item">四月 2020</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">八月 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">七月 2019</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/01/"><span class="level-start"><span class="level-item">一月 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2017/06/"><span class="level-start"><span class="level-item">六月 2017</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/11/"><span class="level-start"><span class="level-item">十一月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/07/"><span class="level-start"><span class="level-item">七月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/03/"><span class="level-start"><span class="level-item">三月 2016</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2016/01/"><span class="level-start"><span class="level-item">一月 2016</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2015/07/"><span class="level-start"><span class="level-item">七月 2015</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/11/"><span class="level-start"><span class="level-item">十一月 2014</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/08/"><span class="level-start"><span class="level-item">八月 2014</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2014/06/"><span class="level-start"><span class="level-item">六月 2014</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Arduino/"><span class="tag">Arduino</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Chart-js/"><span class="tag">Chart.js</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ERP5/"><span class="tag">ERP5</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ESP8266/"><span class="tag">ESP8266</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Java/"><span class="tag">Java</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Linux/"><span class="tag">Linux</span><span class="tag">10</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Metabase/"><span class="tag">Metabase</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/MySQL/"><span class="tag">MySQL</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Odoo/"><span class="tag">Odoo</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Odoo%E5%BC%80%E5%8F%91%E8%80%85%E6%8C%87%E5%8D%97/"><span class="tag">Odoo开发者指南</span><span class="tag">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/OpenWRT/"><span class="tag">OpenWRT</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/PostgreSQL/"><span class="tag">PostgreSQL</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Python/"><span class="tag">Python</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/RaspberryPI/"><span class="tag">RaspberryPI</span><span class="tag">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/RuoYi/"><span class="tag">RuoYi</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SQLServer/"><span class="tag">SQLServer</span><span class="tag">8</span></a></div><div class="control"><a class="tags has-addons" href="/tags/STM32/"><span class="tag">STM32</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SlapOS/"><span class="tag">SlapOS</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Superset/"><span class="tag">Superset</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Windows/"><span class="tag">Windows</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Zope/"><span class="tag">Zope</span><span class="tag">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB/"><span class="tag">工具分享</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/"><span class="tag">数据可视化</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%AC%94%E8%AE%B0/"><span class="tag">笔记</span><span class="tag">1</span></a></div></div></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/static/logos.jpeg" alt="Junle&#039;s Blog" height="28"></a><p class="is-size-7"><span>&copy; 2024 Junle</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
